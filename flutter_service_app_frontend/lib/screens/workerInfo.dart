@@ -97,3 +97,68 @@ Widget _buildProfileHeader() {
     );
   }
 }
+// Add to _WorkerInfoScreenState class
+Widget _buildSectionCard({required String title, required Widget content}) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: const Color(0xFF1E1E1E),
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(
+        color: Colors.yellow[700]!.withOpacity(0.3),
+        width: 1,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 15),
+        content,
+      ],
+    ),
+  );
+}
+
+Widget _buildInfoRow({
+  required BuildContext context,
+  required IconData icon, 
+  required String label, 
+  required String value,
+}) {
+  return Row(
+    children: [
+      Icon(icon, color: Colors.yellow[700], size: 24),
+      const SizedBox(width: 15),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
