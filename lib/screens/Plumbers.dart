@@ -49,3 +49,32 @@ class _PlumberPageState extends State<PlumberPage> {
     fetchPlumbers();
   }
 }
+
+
+Expanded(
+  child: isLoading
+      ? Center(child: CircularProgressIndicator())
+      : filteredPlumbers.isEmpty
+          ? Center(child: Text('No plumbers available at the moment'))
+          : ListView.builder(
+              itemCount: filteredPlumbers.length,
+              itemBuilder: (context, index) {
+                final plumber = filteredPlumbers[index];
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.yellow[700],
+                      child: Icon(Icons.plumbing, color: Colors.white),
+                    ),
+                    title: Text(
+                      plumber['name'],
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('Location: ${plumber['location']}'),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                  ),
+                );
+              },
+            ),
+)
