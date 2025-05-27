@@ -253,3 +253,20 @@ Future<void> _submitBookingRequest() async {
     _isLoading = false;
   });
 }
+
+
+_isLoading
+    ? const Center(child: CircularProgressIndicator())
+    : ElevatedButton(
+        onPressed: _submitBookingRequest,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.yellow[700],
+          foregroundColor: Colors.black87,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text("Submit Booking Request",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      ),
