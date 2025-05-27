@@ -291,3 +291,55 @@ _isLoading
         child: const Text("Submit Booking Request",
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
+// Enhance the _submitBookingRequest method with better logging and error handling
+Future<void> _submitBookingRequest() async {
+  // ... existing validation code ...
+
+  try {
+    // Log the request payload for debugging
+    print('Sending request with body: ${json.encode(requestBody)}');
+    
+    final response = await http.post(
+      apiUrl,
+      headers: headers,
+      body: json.encode(requestBody),
+    );
+
+    // Log the response for debugging
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 201) {
+      // ... existing success handling ...
+    } else {
+      try {
+        final errorData = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed: ${errorData['error'] ?? 'Unknown error'}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed with status ${response.statusCode}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  } catch (e) {
+    print('Exception occurred: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Network error: ${e.toString()}"),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  setState(() {
+    _isLoading = false;
+  });
+}
