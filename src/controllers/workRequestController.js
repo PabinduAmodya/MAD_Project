@@ -106,7 +106,6 @@ export const getWorkerWorkRequests = async (req, res) => {
       return res.status(401).json({ error: 'Authentication required to view work requests' });
     }
 
-    // Verify that the authenticated user is a worker or checking their own requests
     if (req.user.role !== 'worker' && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Only workers can view their work requests' });
     }
@@ -118,7 +117,6 @@ export const getWorkerWorkRequests = async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Get all work requests where workerId matches
     const requestsSnapshot = await db.collection('workRequests')
       .where('workerId', '==', workerId)
       .orderBy('createdAt', 'desc')
@@ -128,7 +126,6 @@ export const getWorkerWorkRequests = async (req, res) => {
       return res.status(200).json({ message: 'No work requests found', requests: [] });
     }
 
-    // Map each request and add requestId as 'id' in response
     const requests = requestsSnapshot.docs.map(doc => ({
       requestId: doc.id,  // Adding requestId field to the response
       ...doc.data()
@@ -298,4 +295,7 @@ export const addWorkRequestMessage = async (req, res) => {
     res.status(500).json({ error: 'Error adding message: ' + error.message });
   }
 };
+
+
+
 
