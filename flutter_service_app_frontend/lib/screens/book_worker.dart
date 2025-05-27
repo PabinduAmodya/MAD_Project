@@ -106,3 +106,97 @@ Widget build(BuildContext context) {
     );
   }
 }
+
+// Add these imports at the top
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
+// Add to _BookWorkerScreenState class
+final LatLng _initialCenter = LatLng(37.7749, -122.4194); // San Francisco by default
+LatLng _selectedLocation = LatLng(37.7749, -122.4194);
+final MapController _mapController = MapController();
+
+void _handleTap(TapPosition tapPosition, LatLng point) {
+  setState(() {
+    _selectedLocation = point;
+    _locationController.text = "${point.latitude.toStringAsFixed(6)}, ${point.longitude.toStringAsFixed(6)}";
+  });
+}
+
+// Add this widget to the build method's Column children
+Container(
+  height: 300,
+  padding: const EdgeInsets.only(bottom: 8.0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+        padding: EdgeInsets.only(bottom: 8.0, left: 4.0),
+        child: Text("Select Location", style: TextStyle(fontSize: 16)),
+      ),
+      Expanded(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Stack(
+            children: [
+              FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  center: _initialCenter,
+                  zoom: 13.0,
+                  onTap: _handleTap,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    subdomains: const ['a', 'b', 'c'],
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: _selectedLocation,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_pin,
+                          color: Colors.red,
+                          size: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Positioned(
+                bottom: 5,
+                right: 5,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: const Text(
+                    '© OpenStreetMap contributors',
+                    style: TextStyle(fontSize: 10, color: Colors.black54),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
+// Add location text field below the map
+TextField(
+  controller: _locationController,
+  decoration: const InputDecoration(
+    labelText: "Selected Location",
+    border: OutlineInputBorder(),
+    hintText: "Tap on the map to select a location",
+  ),
+  readOnly: true,
+),
