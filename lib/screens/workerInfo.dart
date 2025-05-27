@@ -179,3 +179,57 @@ _buildSectionCard(
           children: reviews.map((r) => _buildReviewItem(r)).toList(),
         ),
 ),
+
+// Add to worker_info_screen.dart
+// Phone dialer function
+Future<void> _launchPhoneDialer(String phoneNumber) async {
+  final Uri phoneUri = Uri.parse('tel:$phoneNumber');
+  if (await canLaunchUrl(phoneUri)) {
+    await launchUrl(phoneUri);
+  }
+}
+
+// Update info row to make phone clickable
+_buildInfoRow(
+  icon: Icons.phone_outlined,
+  label: "Phone", 
+  value: widget.workerData['phoneNo'],
+  onTap: () => _launchPhoneDialer(widget.workerData['phoneNo']),
+);
+
+// Add book button
+Container(
+  decoration: BoxDecoration(
+    gradient: LinearGradient(colors: [Colors.yellow[700]!, Colors.yellow[600]!]),
+    borderRadius: BorderRadius.circular(15),
+  ),
+  child: ElevatedButton(
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookWorkerScreen(workerData: widget.workerData),
+        ),
+      );
+    },
+    child: const Text("Book Now", style: TextStyle(color: Colors.black)),
+  ),
+),
+
+// Add chat button to app bar
+actions: [
+  IconButton(
+    icon: const Icon(Icons.message),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            workerId: widget.workerData['id'],
+            workerName: widget.workerData['name'],
+          ),
+        ),
+      );
+    },
+  ),
+],
