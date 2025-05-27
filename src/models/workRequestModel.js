@@ -35,7 +35,7 @@ class WorkRequest {
     return false;
   }
 
-  // Update the timestamp
+  
   updateTimestamp() {
     this.updatedAt = new Date();
   }

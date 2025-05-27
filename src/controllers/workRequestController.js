@@ -37,7 +37,6 @@ export const createWorkRequest = async (req, res) => {
       safeDeadline
     );
 
-    // Prepare work request data, avoiding undefined fields
     const workRequestData = {
       userId: workRequest.userId,
       workerId: workRequest.workerId,
@@ -52,7 +51,7 @@ export const createWorkRequest = async (req, res) => {
       messages: workRequest.messages
     };
 
-    // Only add deadline if it's not null
+    
     if (workRequest.deadline) {
       workRequestData.deadline = workRequest.deadline;
     }
@@ -78,7 +77,6 @@ export const getUserWorkRequests = async (req, res) => {
       return res.status(401).json({ error: 'Authentication required to view work requests' });
     }
 
-    // Get all work requests where userId matches the authenticated user
     const requestsSnapshot = await db.collection('workRequests')
       .where('userId', '==', req.user.id)
       .orderBy('createdAt', 'desc')
