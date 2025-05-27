@@ -60,3 +60,61 @@ class _WorkerInfoScreenState extends State<WorkerInfoScreen> {
     );
   }
 }
+
+// Add to worker_info_screen.dart
+// Helper Widgets
+Widget _buildSectionCard({required String title, required Widget content}) {
+  return Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: const Color(0xFF1E1E1E),
+      borderRadius: BorderRadius.circular(15),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(color: Colors.white, fontSize: 20)),
+        const SizedBox(height: 15),
+        content,
+      ],
+    ),
+  );
+}
+
+Widget _buildInfoRow({required IconData icon, required String label, required String value}) {
+  return Row(
+    children: [
+      Icon(icon, color: Colors.yellow[700]),
+      const SizedBox(width: 15),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(color: Colors.grey[400])),
+          Text(value, style: const TextStyle(color: Colors.white)),
+        ],
+      ),
+    ],
+  );
+}
+
+// Add to build method after profile header
+_buildSectionCard(
+  title: "Professional Overview",
+  content: Column(
+    children: [
+      Text(widget.workerData['about'] ?? "No description", 
+           style: TextStyle(color: Colors.grey[300])),
+      const SizedBox(height: 20),
+      _buildInfoRow(
+        icon: Icons.phone_outlined,
+        label: "Phone",
+        value: widget.workerData['phoneNo'],
+      ),
+      _buildInfoRow(
+        icon: Icons.location_on_outlined,
+        label: "Location",
+        value: widget.workerData['location'],
+      ),
+    ],
+  ),
+),
