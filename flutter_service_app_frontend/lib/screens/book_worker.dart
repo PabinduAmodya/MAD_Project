@@ -46,6 +46,62 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
             // Basic form fields will be added in next commits
           ],
         ),
+
+        // Add to _BookWorkerScreenState class
+Widget _buildTextField(TextEditingController controller, String label,
+    {bool isDate = false, int maxLines = 1, TextInputType? keyboardType}) {
+  return TextField(
+    controller: controller,
+    keyboardType: keyboardType ?? (isDate ? TextInputType.datetime : TextInputType.text),
+    decoration: InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+    ),
+    maxLines: maxLines,
+    onTap: isDate
+        ? () async {
+            final DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (pickedDate != null) {
+              controller.text = pickedDate.toIso8601String().split('T')[0];
+            }
+          }
+        : null,
+  );
+}
+
+// Update build method to include form fields
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    // ... existing scaffold code ...
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ... existing title code ...
+          _buildTextField(_userNameController, "Your Name"),
+          const SizedBox(height: 16),
+          _buildTextField(_userPhoneController, "Your Phone Number", 
+              keyboardType: TextInputType.phone),
+          const SizedBox(height: 16),
+          _buildTextField(_titleController, "Title"),
+          const SizedBox(height: 16),
+          _buildTextField(_descriptionController, "Description", maxLines: 4),
+          const SizedBox(height: 16),
+          _buildTextField(_deadlineController, "Deadline (YYYY-MM-DD)", isDate: true),
+          const SizedBox(height: 24),
+          // Submit button will be added in next commit
+        ],
+      ),
+    ),
+  );
+}
       ),
     );
   }
