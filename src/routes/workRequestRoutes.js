@@ -25,4 +25,8 @@ router.get('/worker/:workerId?', getWorkerWorkRequests);
 router.get('/:requestId', getWorkRequestById);
 
 
+// Update the status of a work request
+router.patch('/:requestId/status', updateWorkRequestStatus);
+
+
 export default router;

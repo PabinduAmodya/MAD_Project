@@ -184,3 +184,62 @@ export const getWorkRequestById = async (req, res) => {
   }
 };
 
+
+
+// Update the status of a work request
+export const updateWorkRequestStatus = async (req, res) => {
+  try {
+    const requestId = req.params.requestId;
+    const { status } = req.body;
+    
+    if (!requestId || !status) {
+      return res.status(400).json({ error: 'Request ID and status are required' });
+    }
+
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required to update work request' });
+    }
+
+    // Get the work request
+    const requestDoc = await db.collection('workRequests').doc(requestId).get();
+    
+    if (!requestDoc.exists) {
+      return res.status(404).json({ error: 'Work request not found' });
+    }
+
+    const requestData = requestDoc.data();
+
+    // Verify permissions: workers can only accept/reject/complete, users can only cancel
+    if (req.user.id === requestData.workerId) {
+      // Worker can change status to accepted, rejected, or completed
+      if (!['accepted', 'rejected', 'completed'].includes(status)) {
+        return res.status(400).json({ 
+          error: 'Workers can only update status to accepted, rejected, or completed' 
+        });
+      }
+    } else if (req.user.id === requestData.userId) {
+      // User can only cancel their requests
+      if (status !== 'cancelled') {
+        return res.status(400).json({ error: 'Users can only cancel their requests' });
+      }
+    } else if (req.user.role !== 'admin') {
+      // Not worker, not requester, not admin
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Update the status and timestamp
+    await db.collection('workRequests').doc(requestId).update({
+      status: status,
+      updatedAt: new Date()
+    });
+
+    res.status(200).json({ 
+      message: `Work request status updated to ${status}`, 
+      requestId: requestId 
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating work request: ' + error.message });
+  }
+};
+
