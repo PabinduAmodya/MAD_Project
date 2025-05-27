@@ -21,4 +21,8 @@ router.get('/user', getUserWorkRequests);
 router.get('/worker/:workerId?', getWorkerWorkRequests);
 
 
+// Get a specific work request by ID
+router.get('/:requestId', getWorkRequestById);
+
+
 export default router;
