@@ -29,4 +29,8 @@ router.get('/:requestId', getWorkRequestById);
 router.patch('/:requestId/status', updateWorkRequestStatus);
 
 
+// Add a message to a work request
+router.post('/:requestId/messages', addWorkRequestMessage);
+
+
 export default router;
