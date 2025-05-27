@@ -16,4 +16,9 @@ router.post('/', createWorkRequest);
 // Get all work requests for the logged-in user
 router.get('/user', getUserWorkRequests);
 
+
+// Get all work requests for a specific worker (worker ID in params)
+router.get('/worker/:workerId?', getWorkerWorkRequests);
+
+
 export default router;
