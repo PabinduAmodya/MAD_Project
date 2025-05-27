@@ -118,3 +118,64 @@ _buildSectionCard(
     ],
   ),
 ),
+
+// Add to worker_info_screen.dart
+// State variables
+List<dynamic> reviews = [];
+bool isLoading = true;
+String errorMessage = "";
+
+// Add to state class
+@override
+void initState() {
+  super.initState();
+  fetchWorkerReviews();
+}
+
+Future<void> fetchWorkerReviews() async {
+  try {
+    var response = await Dio().get(
+      'http://10.0.2.2:5000/api/reviews/${widget.workerData['id']}'
+    );
+    setState(() {
+      reviews = response.data;
+      isLoading = false;
+    });
+  } catch (e) {
+    setState(() {
+      errorMessage = "Error fetching reviews";
+      isLoading = false;
+    });
+  }
+}
+
+// Add review item widget
+Widget _buildReviewItem(Map<String, dynamic> review) {
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(
+      color: const Color(0xFF2A2A2A),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      children: [
+        Text(review['userName'] ?? "Anonymous", 
+             style: const TextStyle(color: Colors.white)),
+        Text(review['comment'], style: const TextStyle(color: Colors.white)),
+      ],
+    ),
+  );
+}
+
+// Add to build method
+_buildSectionCard(
+  title: "Client Reviews",
+  content: isLoading 
+    ? const CircularProgressIndicator()
+    : errorMessage.isNotEmpty
+      ? Text(errorMessage)
+      : Column(
+          children: reviews.map((r) => _buildReviewItem(r)).toList(),
+        ),
+),
