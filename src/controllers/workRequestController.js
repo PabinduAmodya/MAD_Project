@@ -65,7 +65,5 @@ export const createWorkRequest = async (req, res) => {
       requestId: requestRef.id
     });
 
-  } catch (error) {
-    res.status(500).json({ error: 'Error creating work request: ' + error.message });
-  }
+  
 };
