@@ -102,3 +102,46 @@ void dispose() {
   locationController.dispose();
   super.dispose();
 }
+
+Padding(
+  padding: const EdgeInsets.all(16.0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Search for plumbers in your area:',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 8),
+      Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: locationController,
+              decoration: InputDecoration(
+                hintText: 'Enter location to filter',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () {
+              filterPlumbersByLocation(locationController.text);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.yellow[700],
+              padding: EdgeInsets.symmetric(vertical: 12),
+            ),
+            child: Text(
+              'Filter',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+),
+Divider(),
