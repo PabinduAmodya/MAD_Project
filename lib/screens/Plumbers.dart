@@ -78,3 +78,27 @@ Expanded(
               },
             ),
 )
+
+TextEditingController locationController = TextEditingController();
+bool isFiltering = false;
+
+void filterPlumbersByLocation(String location) {
+  setState(() {
+    isFiltering = true;
+    if (location.trim().isEmpty) {
+      filteredPlumbers = List.from(allPlumbers);
+    } else {
+      filteredPlumbers = allPlumbers
+          .where((plumber) => 
+              plumber['location'].toString().toLowerCase()
+              .contains(location.toLowerCase()))
+          .toList();
+    }
+  });
+}
+
+@override
+void dispose() {
+  locationController.dispose();
+  super.dispose();
+}
