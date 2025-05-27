@@ -143,3 +143,44 @@ export const getWorkerWorkRequests = async (req, res) => {
 };
 
 
+// Get a specific work request by ID
+export const getWorkRequestById = async (req, res) => {
+  try {
+    const requestId = req.params.requestId;
+    
+    if (!requestId) {
+      return res.status(400).json({ error: 'Request ID is required' });
+    }
+
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required to view work request' });
+    }
+
+    // Get the work request
+    const requestDoc = await db.collection('workRequests').doc(requestId).get();
+    
+    if (!requestDoc.exists) {
+      return res.status(404).json({ error: 'Work request not found' });
+    }
+
+    const requestData = requestDoc.data();
+
+    // Check if the user has permission to view this request
+    if (
+      requestData.userId !== req.user.id && 
+      requestData.workerId !== req.user.id && 
+      req.user.role !== 'admin'
+    ) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    res.status(200).json({
+      id: requestDoc.id,
+      ...requestData
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching work request: ' + error.message });
+  }
+};
+
