@@ -200,3 +200,94 @@ TextField(
   ),
   readOnly: true,
 ),
+
+
+// Add to _BookWorkerScreenState class
+Future<void> _submitBookingRequest() async {
+  if (_titleController.text.isEmpty ||
+      _descriptionController.text.isEmpty ||
+      _locationController.text.isEmpty ||
+      _deadlineController.text.isEmpty ||
+      _userNameController.text.isEmpty ||
+      _userPhoneController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("All fields are required!")),
+    );
+    return;
+  }
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  final Uri apiUrl = Uri.parse('http://10.0.2.2:5000/api/requests');
+  final Map<String, String> headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${widget.userToken}',
+  };
+
+  final Map<String, dynamic> requestBody = {
+    'workerId': widget.workerData['id'],
+    'userName': _userNameController.text,
+    'userPhone': _userPhoneController.text,
+    'title': _titleController.text,
+    'description': _descriptionController.text,
+    'location': _locationController.text,
+    'deadline': _deadlineController.text,
+    'coordinates': {
+      'latitude': _selectedLocation.latitude,
+      'longitude': _selectedLocation.longitude
+    },
+  };
+
+  try {
+    final response = await http.post(
+      apiUrl,
+      headers: headers,
+      body: json.encode(requestBody),
+    );
+
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Work request sent successfully!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      final errorData = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed: ${errorData['error']}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+    );
+  }
+
+  setState(() {
+    _isLoading = false;
+  });
+}
+
+// Add submit button to build method
+_isLoading
+    ? const Center(child: CircularProgressIndicator())
+    : ElevatedButton(
+        onPressed: _submitBookingRequest,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.yellow[700],
+          foregroundColor: Colors.black87,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text("Submit Booking Request",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      ),
