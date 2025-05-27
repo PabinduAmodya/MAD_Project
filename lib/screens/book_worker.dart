@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class BookWorkerScreen extends StatefulWidget {
   final Map<String, dynamic> workerData;
-  final String userToken;
+  final String userToken; // User's JWT Token for authentication
 
   const BookWorkerScreen({
     super.key,
@@ -25,16 +27,103 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
   final TextEditingController _userPhoneController = TextEditingController();
 
   bool _isLoading = false;
-
-  final LatLng _initialCenter = LatLng(37.7749, -122.4194);
+  
+  // Default map center (can be customized to user's current location)
+  final LatLng _initialCenter = LatLng(37.7749, -122.4194); // San Francisco by default
   LatLng _selectedLocation = LatLng(37.7749, -122.4194);
   final MapController _mapController = MapController();
+
+  @override
+  void initState() {
+    super.initState();
+    // You could set initial location based on device GPS or other logic here
+  }
 
   void _handleTap(TapPosition tapPosition, LatLng point) {
     setState(() {
       _selectedLocation = point;
-      _locationController.text =
-          "${point.latitude.toStringAsFixed(6)}, ${point.longitude.toStringAsFixed(6)}";
+      // Update the location text field with coordinates
+      _locationController.text = "${point.latitude.toStringAsFixed(6)}, ${point.longitude.toStringAsFixed(6)}";
+    });
+  }
+
+  Future<void> _submitBookingRequest() async {
+    if (_titleController.text.isEmpty ||
+        _descriptionController.text.isEmpty ||
+        _locationController.text.isEmpty ||
+        _deadlineController.text.isEmpty ||
+        _userNameController.text.isEmpty ||
+        _userPhoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("All fields are required!")),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final Uri apiUrl = Uri.parse('http://10.0.2.2:5000/api/requests'); // Matches backend
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${widget.userToken}', // Send JWT Token
+    };
+
+    final Map<String, dynamic> requestBody = {
+      'workerId': widget.workerData['id'],
+      'userName': _userNameController.text,
+      'userPhone': _userPhoneController.text,
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'location': _locationController.text,
+      'deadline': _deadlineController.text,
+      'coordinates': {
+        'latitude': _selectedLocation.latitude,
+        'longitude': _selectedLocation.longitude
+      },
+    };
+
+    try {
+      // Log the request payload for debugging
+      print('Sending request with body: ${json.encode(requestBody)}');
+      
+      final response = await http.post(
+        apiUrl,
+        headers: headers,
+        body: json.encode(requestBody),
+      );
+
+      // Log the response for debugging
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Work request sent successfully!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        final errorData = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed: ${errorData['error']}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -63,6 +152,8 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
             const SizedBox(height: 16),
             _buildTextField(_descriptionController, "Description", maxLines: 4),
             const SizedBox(height: 16),
+            
+            // Location Map Section
             Container(
               height: 300,
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -76,7 +167,7 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Stack(
+                              child: Stack(
                         children: [
                           FlutterMap(
                             mapController: _mapController,
@@ -106,6 +197,7 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
                               ),
                             ],
                           ),
+                          // Custom attribution in the bottom right corner
                           Positioned(
                             bottom: 5,
                             right: 5,
@@ -128,6 +220,8 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
                 ],
               ),
             ),
+            
+            // Location text field (read-only, shows selected coordinates)
             TextField(
               controller: _locationController,
               decoration: const InputDecoration(
@@ -137,9 +231,25 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
               ),
               readOnly: true,
             ),
+            
             const SizedBox(height: 16),
             _buildTextField(_deadlineController, "Deadline (YYYY-MM-DD)", isDate: true),
             const SizedBox(height: 24),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ElevatedButton(
+                    onPressed: _submitBookingRequest,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow[700],
+                      foregroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text("Submit Booking Request",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
           ],
         ),
       ),
@@ -156,6 +266,7 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
         border: OutlineInputBorder(),
       ),
       maxLines: maxLines,
+      // Optional: Add onTap that shows a date picker if isDate is true
       onTap: isDate
           ? () async {
               final DateTime? pickedDate = await showDatePicker(
@@ -172,101 +283,3 @@ class _BookWorkerScreenState extends State<BookWorkerScreen> {
     );
   }
 }
-
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-Future<void> _submitBookingRequest() async {
-  if (_titleController.text.isEmpty ||
-      _descriptionController.text.isEmpty ||
-      _locationController.text.isEmpty ||
-      _deadlineController.text.isEmpty ||
-      _userNameController.text.isEmpty ||
-      _userPhoneController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("All fields are required!")),
-    );
-    return;
-  }
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  final Uri apiUrl = Uri.parse('http://10.0.2.2:5000/api/requests');
-  final Map<String, String> headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${widget.userToken}',
-  };
-
-  final Map<String, dynamic> requestBody = {
-    'workerId': widget.workerData['id'],
-    'userName': _userNameController.text,
-    'userPhone': _userPhoneController.text,
-    'title': _titleController.text,
-    'description': _descriptionController.text,
-    'location': _locationController.text,
-    'deadline': _deadlineController.text,
-    'coordinates': {
-      'latitude': _selectedLocation.latitude,
-      'longitude': _selectedLocation.longitude
-    },
-  };
-
-  try {
-    print('Sending request with body: ${json.encode(requestBody)}');
-
-    final response = await http.post(
-      apiUrl,
-      headers: headers,
-      body: json.encode(requestBody),
-    );
-
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
-    if (response.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Work request sent successfully!"),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Navigator.pop(context);
-    } else {
-      final errorData = json.decode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed: ${errorData['error']}"),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  } catch (e) {
-    print('Exception occurred: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
-    );
-  }
-
-  setState(() {
-    _isLoading = false;
-  });
-}
-
-
-_isLoading
-    ? const Center(child: CircularProgressIndicator())
-    : ElevatedButton(
-        onPressed: _submitBookingRequest,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.yellow[700],
-          foregroundColor: Colors.black87,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: const Text("Submit Booking Request",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-      ),
