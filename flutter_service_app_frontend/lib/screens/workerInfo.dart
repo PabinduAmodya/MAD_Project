@@ -37,6 +37,62 @@ class _WorkerInfoScreenState extends State<WorkerInfoScreen> {
             ],
           ),
         ),
+
+
+
+        // Add to _WorkerInfoScreenState class
+Widget _buildProfileHeader() {
+  return Center(
+    child: Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.yellow[700]!.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: 80,
+            backgroundColor: Colors.yellow[700],
+            child: Text(
+              widget.workerData['name'].toString().substring(0, 1).toUpperCase(),
+              style: const TextStyle(
+                fontSize: 70,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          widget.workerData['name'],
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          widget.workerData['specialization'] ?? 'Professional',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.yellow[600],
+            letterSpacing: 1.1,
+          ),
+        ),
+      ],
+    ),
+  );
+}
       ),
     );
   }
