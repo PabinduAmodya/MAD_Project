@@ -236,3 +236,70 @@ Widget _buildReviewItem(Map<String, dynamic> review) {
     ),
   );
 }
+// Add to _WorkerInfoScreenState class
+Future<void> _launchPhoneDialer(BuildContext context, String phoneNumber) async {
+  final Uri phoneUri = Uri.parse('tel:$phoneNumber');
+  try {
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not launch phone dialer for $phoneNumber'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error launching phone dialer: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}
+
+// Update _buildInfoRow to include phone dialer functionality
+Widget _buildInfoRow({
+  required BuildContext context,
+  required IconData icon, 
+  required String label, 
+  required String value,
+}) {
+  return Row(
+    children: [
+      GestureDetector(
+        onTap: label == "Phone" 
+          ? () => _launchPhoneDialer(context, value) 
+          : null,
+        child: Icon(
+          icon, 
+          color: label == "Phone" ? Colors.green : Colors.yellow[700], 
+          size: 24
+        ),
+      ),
+      const SizedBox(width: 15),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
