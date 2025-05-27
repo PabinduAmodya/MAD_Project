@@ -162,3 +162,77 @@ Widget _buildInfoRow({
     ],
   );
 }
+// Add to _WorkerInfoScreenState class
+List<dynamic> reviews = [];
+bool isLoading = true;
+String errorMessage = "";
+
+@override
+void initState() {
+  super.initState();
+  fetchWorkerReviews();
+}
+
+Future<String?> getUserToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('auth_token');
+}
+
+Future<void> fetchWorkerReviews() async {
+  try {
+    String? token = await getUserToken();
+    var workerId = widget.workerData['id'];
+    
+    var response = await Dio().get(
+      'http://10.0.2.2:5000/api/reviews/$workerId',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        reviews = response.data;
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        errorMessage = "Failed to load reviews.";
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    setState(() {
+      errorMessage = "Error fetching reviews: ${e.toString()}";
+      isLoading = false;
+    });
+  }
+}
+
+Widget _buildReviewItem(Map<String, dynamic> review) {
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(
+      color: const Color(0xFF2A2A2A),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          review['userName'] ?? "Anonymous User",
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          review['comment'] ?? "No comment provided.",
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  );
+}
