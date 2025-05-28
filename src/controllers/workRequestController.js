@@ -92,3 +92,22 @@ export const getUserWorkRequests = async (req, res) => {
     res.status(500).json({ error: 'Error fetching user work requests: ' + error.message });
   }
 };
+// Get work requests for a specific worker
+export const getWorkerWorkRequests = async (req, res) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required to view work requests' });
+    }
+
+    // Verify that the authenticated user is a worker or checking their own requests
+    if (req.user.role !== 'worker' && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Only workers can view their work requests' });
+    }
+
+    const workerId = req.params.workerId || req.user.id;
+    
+    // If not admin and trying to view someone else's requests, block access
+    if (req.user.role !== 'admin' && workerId !== req.user.id) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
