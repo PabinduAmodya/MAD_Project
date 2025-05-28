@@ -85,7 +85,64 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _showError('Error picking image: $e');
     }
   }
+ Future<void> _updateProfile() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isUpdating = true;
+      });
 
+      try {
+        final updateData = {
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'phoneNo': _phoneController.text,
+          'location': _locationController.text,
+          'workType': _workTypeController.text,
+          'yearsOfExperience': int.tryParse(_experienceController.text) ?? 0,
+        };
+
+        final response = await _dio.put(
+          'http://10.0.2.2:5000/api/workers/$workerId',
+          data: updateData,
+          options: Options(headers: {'Authorization': 'Bearer $authToken'}),
+        );
+
+        if (response.statusCode == 200) {
+          // Update successful
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          
+          // Update local storage if needed
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('username', _nameController.text);
+          
+          // Return to previous screen with success
+          Navigator.pop(context, true);
+        } else {
+          _showError('Failed to update profile');
+        }
+      } catch (e) {
+        _showError('Error updating profile: ${e.toString()}');
+      } finally {
+        setState(() {
+          _isUpdating = false;
+        });
+      }
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
 @override
   void dispose() {
     _nameController.dispose();
