@@ -31,3 +31,11 @@ import {
 
 // Update the status of a work request
 router.patch('/:requestId/status', updateWorkRequestStatus);
+import { 
+  addWorkRequestMessage 
+} from '../controllers/workRequestController.js';
+
+// Add a message to a work request
+router.post('/:requestId/messages', addWorkRequestMessage);
+
+export default router;
