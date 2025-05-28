@@ -19,3 +19,9 @@ import {
 
 // Get all work requests for a specific worker (worker ID in params)
 router.get('/worker/:workerId?', getWorkerWorkRequests);
+import { 
+  getWorkRequestById 
+} from '../controllers/workRequestController.js';
+
+// Get a specific work request by ID
+router.get('/:requestId', getWorkRequestById);
