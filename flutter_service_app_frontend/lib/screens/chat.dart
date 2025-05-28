@@ -150,4 +150,16 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text(
+          widget.workerName,
+          style: const TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
 
