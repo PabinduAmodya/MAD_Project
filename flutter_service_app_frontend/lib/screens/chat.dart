@@ -90,3 +90,64 @@ class _ChatScreenState extends State<ChatScreen> {
       _showErrorSnackBar('Error starting chat: $e');
     }
   }
+    Future<void> _fetchMessages() async {
+    if (_chatId == null) return;
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:5000/api/chats/$_chatId/messages'),
+        headers: {
+          'Authorization': 'Bearer ${widget.userToken}'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _messages = json.decode(response.body);
+        });
+      } else {
+        _showErrorSnackBar('Failed to fetch messages');
+      }
+    } catch (e) {
+      _showErrorSnackBar('Error fetching messages: $e');
+    }
+  }
+
+  Future<void> _sendMessage() async {
+    final message = _messageController.text.trim();
+    if (message.isEmpty || _chatId == null) return;
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/chats/send'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.userToken}'
+        },
+        body: json.encode({
+          'chatId': _chatId,
+          'message': message,
+          'senderId': _currentUserId
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        _messageController.clear();
+        _fetchMessages();
+      } else {
+        _showErrorSnackBar('Failed to send message');
+      }
+    } catch (e) {
+      _showErrorSnackBar('Error sending message: $e');
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
