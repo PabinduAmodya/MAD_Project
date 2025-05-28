@@ -1,3 +1,6 @@
+import { db } from '../firebase.js';
+import WorkRequest from '../models/workRequestModel.js';
+
 // Create a new work request
 export const createWorkRequest = async (req, res) => {
   try {
@@ -18,6 +21,7 @@ export const createWorkRequest = async (req, res) => {
     if (!workerDoc.exists || workerDoc.data().role !== 'worker') {
       return res.status(404).json({ error: 'Worker not found!' });
     }
+
     // Convert deadline to Date format if provided, otherwise set it to null
     const safeDeadline = deadline ? new Date(deadline) : null;
 
@@ -33,7 +37,7 @@ export const createWorkRequest = async (req, res) => {
       safeDeadline
     );
 
-        // Prepare work request data, avoiding undefined fields
+    // Prepare work request data, avoiding undefined fields
     const workRequestData = {
       userId: workRequest.userId,
       workerId: workRequest.workerId,
@@ -52,6 +56,7 @@ export const createWorkRequest = async (req, res) => {
     if (workRequest.deadline) {
       workRequestData.deadline = workRequest.deadline;
     }
+
     // Save to Firestore
     const requestRef = await db.collection('workRequests').add(workRequestData);
 
@@ -64,6 +69,8 @@ export const createWorkRequest = async (req, res) => {
     res.status(500).json({ error: 'Error creating work request: ' + error.message });
   }
 };
+
+
 // Get work requests for a specific user (their own requests)
 export const getUserWorkRequests = async (req, res) => {
   try {
@@ -92,6 +99,7 @@ export const getUserWorkRequests = async (req, res) => {
     res.status(500).json({ error: 'Error fetching user work requests: ' + error.message });
   }
 };
+
 // Get work requests for a specific worker
 export const getWorkerWorkRequests = async (req, res) => {
   try {
@@ -111,6 +119,7 @@ export const getWorkerWorkRequests = async (req, res) => {
     if (req.user.role !== 'admin' && workerId !== req.user.id) {
       return res.status(403).json({ error: 'Access denied' });
     }
+
     // Get all work requests where workerId matches
     const requestsSnapshot = await db.collection('workRequests')
       .where('workerId', '==', workerId)
@@ -132,6 +141,8 @@ export const getWorkerWorkRequests = async (req, res) => {
     res.status(500).json({ error: 'Error fetching worker work requests: ' + error.message });
   }
 };
+
+
 // Get a specific work request by ID
 export const getWorkRequestById = async (req, res) => {
   try {
@@ -172,6 +183,7 @@ export const getWorkRequestById = async (req, res) => {
     res.status(500).json({ error: 'Error fetching work request: ' + error.message });
   }
 };
+
 // Update the status of a work request
 export const updateWorkRequestStatus = async (req, res) => {
   try {
@@ -213,6 +225,7 @@ export const updateWorkRequestStatus = async (req, res) => {
       // Not worker, not requester, not admin
       return res.status(403).json({ error: 'Access denied' });
     }
+
     // Update the status and timestamp
     await db.collection('workRequests').doc(requestId).update({
       status: status,
