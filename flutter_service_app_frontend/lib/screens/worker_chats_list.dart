@@ -77,3 +77,41 @@ class _WorkerChatsListState extends State<WorkerChatsList> {
       ),
     );
   }
+  void _navigateToChat(String userId, String userName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatScreen(
+          workerId: widget.workerId, 
+          workerName: userName,
+          userToken: widget.userToken,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        backgroundColor: Colors.yellow[700],
+        title: Text(
+          'My Chats', 
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: _isLoading 
+        ? Center(
+            child: CircularProgressIndicator(
+              color: Colors.yellow[700],
+            ),
+          )
+        : _chatsList.isEmpty
+          ? Center(
+              child: Text(
+                'No chats available',
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+            )
