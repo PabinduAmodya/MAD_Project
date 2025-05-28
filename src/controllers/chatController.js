@@ -55,3 +55,53 @@ export const startChat = async (req, res) => {
         res.status(500).json({ error: 'Error starting chat: ' + error.message });
     }
 };
+// Send a message
+export const sendMessage = async (req, res) => {
+    try {
+        const { chatId, message } = req.body;
+        const senderId = req.user.id; // Get sender ID from token
+        
+        if (!chatId || !message) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Verify chat exists and user is a participant
+        const chatDoc = await db.collection('chats').doc(chatId).get();
+        if (!chatDoc.exists) {
+            return res.status(404).json({ error: 'Chat not found' });
+        }
+        
+        const chatData = chatDoc.data();
+        if (!chatData.users.includes(senderId)) {
+            return res.status(403).json({ error: 'You are not authorized to send messages in this chat' });
+        }
+        
+        // Create message with a unique ID
+        const messageId = uuidv4();
+        const messageData = {
+            id: messageId,
+            senderId,
+            message,
+            timestamp: new Date().toISOString(),
+            read: false
+        };
+        
+        // Add message to the chat's messages collection
+        await db.collection('chats').doc(chatId).collection('messages').doc(messageId).set(messageData);
+        
+        // Update chat's last message and timestamp
+        await db.collection('chats').doc(chatId).update({
+            lastMessage: message,
+            timestamp: new Date().toISOString()
+        });
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Message sent',
+            messageId 
+        });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Error sending message: ' + error.message });
+    }
+};
