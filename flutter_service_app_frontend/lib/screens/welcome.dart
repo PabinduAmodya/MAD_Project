@@ -161,6 +161,80 @@ class WelcomeScreen extends StatelessWidget {
                         ),
 
                         SizedBox(height: 32),
+                        // Sign In - Improved visual hierarchy
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginScreen()),
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: BorderSide(color: Colors.yellow[700]!, width: 1),
+                            ),
+                          ),
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Already have an account? ",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: "Sign In",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.yellow[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Footer area with version and copyright
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Column(
+                      children: [
+                        Text(
+                          "Version 1.0.0",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "© 2025 QuickFix. All rights reserved",
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 
 
