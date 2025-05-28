@@ -63,5 +63,33 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
     }
 
     const String apiUrl = 'http://10.0.2.2:5000/api/users/register';
+     // Construct request body
+    Map<String, dynamic> workerData = {
+      "name": nameController.text.trim(),
+      "email": emailController.text.trim(),
+      "password": passwordController.text.trim(),
+      "role": "worker",
+      "workType": selectedWorkType,
+      "location": locationController.text.trim(),
+      "yearsOfExperience": yearsExperienceController.text.trim(),
+      "phoneNo": phoneNoController.text.trim(),
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(workerData),
+      );
+
+      if (response.statusCode == 201) {
+        // Successful registration
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration Successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
 
 
