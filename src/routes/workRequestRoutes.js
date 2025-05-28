@@ -1,7 +1,11 @@
 import express from 'express';
 import { 
   createWorkRequest, 
-  getUserWorkRequests
+  getUserWorkRequests, 
+  getWorkerWorkRequests, 
+  getWorkRequestById, 
+  updateWorkRequestStatus, 
+  addWorkRequestMessage 
 } from '../controllers/workRequestController.js';
 
 const router = express.Router();
@@ -12,30 +16,21 @@ router.post('/', createWorkRequest);
 // Get all work requests for the logged-in user
 router.get('/user', getUserWorkRequests);
 
-export default router;
-import { 
-  getWorkerWorkRequests 
-} from '../controllers/workRequestController.js';
 
 // Get all work requests for a specific worker (worker ID in params)
 router.get('/worker/:workerId?', getWorkerWorkRequests);
-import { 
-  getWorkRequestById 
-} from '../controllers/workRequestController.js';
+
 
 // Get a specific work request by ID
 router.get('/:requestId', getWorkRequestById);
-import { 
-  updateWorkRequestStatus 
-} from '../controllers/workRequestController.js';
+
 
 // Update the status of a work request
 router.patch('/:requestId/status', updateWorkRequestStatus);
-import { 
-  addWorkRequestMessage 
-} from '../controllers/workRequestController.js';
+
 
 // Add a message to a work request
 router.post('/:requestId/messages', addWorkRequestMessage);
+
 
 export default router;
