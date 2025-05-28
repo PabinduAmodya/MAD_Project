@@ -13,6 +13,17 @@ class WorkRequest {
     this.updatedAt = new Date();    // When the request was last updated
     this.messages = [];             // Array to store communication between user and worker
   }
+
+  // Add a message to the conversation
+  addMessage(senderId, content) {
+    this.messages.push({
+      senderId,
+      content,
+      timestamp: new Date()
+    });
+    this.updateTimestamp();
+  }
+
   // Update the status of the request
   updateStatus(newStatus) {
     const validStatuses = ['pending', 'accepted', 'rejected', 'completed', 'cancelled'];
@@ -23,14 +34,10 @@ class WorkRequest {
     }
     return false;
   }
-  // Add a message to the conversation
-  addMessage(senderId, content) {
-    this.messages.push({
-      senderId,
-      content,
-      timestamp: new Date()
-    });
-    this.updateTimestamp();
+
+  // Update the timestamp
+  updateTimestamp() {
+    this.updatedAt = new Date();
   }
 }
 
