@@ -557,4 +557,92 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       ),
     );
   }
+
+  // Method to build reviews section
+  Widget _buildReviewsSection() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.yellow[700]!.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Recent Reviews",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              if (reviews.isNotEmpty)
+                TextButton(
+                  onPressed: () => _showAllReviewsDialog(context, reviews),
+                  child: Text(
+                    "See All",
+                    style: TextStyle(
+                      color: Colors.yellow[600],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          
+          // Reviews content
+          if (_isLoadingReviews)
+            Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow[700],
+              ),
+            )
+          else if (reviewError.isNotEmpty)
+            Center(
+              child: Text(
+                reviewError,
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+          else if (reviews.isEmpty)
+            Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.rate_review_outlined,
+                    color: Colors.grey[600],
+                    size: 40,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "No reviews yet",
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Column(
+              children: List.generate(
+                reviews.length > 2 ? 2 : reviews.length,
+                (index) => _buildReviewItem(reviews[index]),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
