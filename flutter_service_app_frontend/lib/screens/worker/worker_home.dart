@@ -8,8 +8,15 @@ class WorkerHomeScreen extends StatefulWidget {
   _WorkerHomeScreenState createState() => _WorkerHomeScreenState();
 }
 
+class WorkerHomeScreen extends StatefulWidget {
+  const WorkerHomeScreen({super.key});
+
+  @override
+  _WorkerHomeScreenState createState() => _WorkerHomeScreenState();
+}
+
 class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
-      bool isAvailable = true;
+  bool isAvailable = true;
   String? authToken;
   String? workerId;
   String? workerName;
@@ -54,8 +61,8 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       // fetchNotificationCount();
     }
   }
-
-    // Add method to fetch worker's reviews
+  
+  // Add method to fetch worker's reviews
   Future<void> fetchWorkerReviews() async {
     if (workerId == null) return;
     
@@ -100,4 +107,25 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       });
     }
   }
+
+  // Add method to navigate to notifications page
+  void _navigateToNotifications() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NotificationPage(),
+      ),
+    );
+  }
+
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+    await prefs.remove('user_id');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
 }
