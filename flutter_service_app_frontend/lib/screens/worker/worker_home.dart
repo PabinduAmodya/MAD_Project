@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_service_app/screens/login.dart';
 import 'package:flutter_service_app/screens/worker/worker_notifications_page.dart'; 
 import 'package:flutter_service_app/screens/worker/worker_chats_list.dart';
+import 'package:dio/dio.dart';
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -407,4 +408,80 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
+  Widget _buildStatItem({
+    required IconData icon,
+    required String label,
+    required String sublabel,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.black.withOpacity(0.8), size: 24),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        Text(
+          sublabel,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black.withOpacity(0.6),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Method to show all reviews dialog
+  void _showAllReviewsDialog(BuildContext context, List<dynamic> allReviews) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Your Reviews (${allReviews.length})",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: allReviews.length,
+                  itemBuilder: (context, index) {
+                    return _buildReviewItem(allReviews[index]);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
