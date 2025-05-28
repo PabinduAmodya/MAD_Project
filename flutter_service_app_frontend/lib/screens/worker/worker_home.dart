@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_service_app/screens/login.dart';
 import 'package:flutter_service_app/screens/worker/worker_notifications_page.dart'; 
+import 'package:flutter_service_app/screens/worker/worker_chats_list.dart';
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -248,6 +249,69 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+   Widget _buildAvailabilityToggle() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: isAvailable ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isAvailable ? Colors.green.withOpacity(0.5) : Colors.red.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isAvailable ? 'Available for Work' : 'Not Available',
+                style: TextStyle(
+                  color: isAvailable ? Colors.green : Colors.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                isAvailable 
+                    ? 'You are visible to customers' 
+                    : 'You are hidden from new requests',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          Switch(
+            value: isAvailable,
+            onChanged: (bool value) {
+              setState(() {
+                isAvailable = value;
+              });
+              // TODO: Implement backend update for worker availability
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(value ? 'You are now available' : 'You are now unavailable'),
+                  backgroundColor: Colors.yellow[700],
+                ),
+              );
+            },
+            activeColor: Colors.green,
+            activeTrackColor: Colors.green.withOpacity(0.3),
+            inactiveThumbColor: Colors.red,
+            inactiveTrackColor: Colors.red.withOpacity(0.3),
+          ),
+        ],
       ),
     );
   }
