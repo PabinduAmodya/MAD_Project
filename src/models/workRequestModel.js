@@ -13,3 +13,13 @@ class WorkRequest {
     this.updatedAt = new Date();    // When the request was last updated
     this.messages = [];             // Array to store communication between user and worker
   }
+  // Update the status of the request
+  updateStatus(newStatus) {
+    const validStatuses = ['pending', 'accepted', 'rejected', 'completed', 'cancelled'];
+    if (validStatuses.includes(newStatus)) {
+      this.status = newStatus;
+      this.updateTimestamp();
+      return true;
+    }
+    return false;
+  }
