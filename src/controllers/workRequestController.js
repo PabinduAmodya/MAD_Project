@@ -18,3 +18,17 @@ export const createWorkRequest = async (req, res) => {
     if (!workerDoc.exists || workerDoc.data().role !== 'worker') {
       return res.status(404).json({ error: 'Worker not found!' });
     }
+    // Convert deadline to Date format if provided, otherwise set it to null
+    const safeDeadline = deadline ? new Date(deadline) : null;
+
+    // Create a new work request 
+    const workRequest = new WorkRequest(
+      req.user.id,
+      workerId,
+      userName,
+      userPhone,
+      title,
+      description,
+      location,
+      safeDeadline
+    );
