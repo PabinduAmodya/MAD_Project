@@ -26,4 +26,34 @@ class WelcomeScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
+          // Improved Gradient Overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.1, 0.4, 0.7, 0.9],
+                colors: [
+                  Colors.black.withOpacity(0.8),
+                  Colors.black.withOpacity(0.6),
+                  Colors.black.withOpacity(0.5),
+                  Colors.black.withOpacity(0.8),
+                ],
+              ),
+            ),
+          ),
+
+          // Content
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Column(
+                children: [
+                  // Spacer to replace logo area
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(),
+                  ),
+
+
 
