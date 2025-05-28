@@ -105,3 +105,42 @@ export const sendMessage = async (req, res) => {
         res.status(500).json({ error: 'Error sending message: ' + error.message });
     }
 };
+// Get messages of a chat
+export const getMessages = async (req, res) => {
+    try {
+        const { chatId } = req.params;
+        const userId = req.user.id;
+        
+        if (!chatId) {
+            return res.status(400).json({ error: 'Chat ID is required' });
+        }
+        
+        // Verify chat exists and user is a participant
+        const chatDoc = await db.collection('chats').doc(chatId).get();
+        if (!chatDoc.exists) {
+            return res.status(404).json({ error: 'Chat not found' });
+        }
+        
+        const chatData = chatDoc.data();
+        if (!chatData.users.includes(userId)) {
+            return res.status(403).json({ error: 'You are not authorized to view this chat' });
+        }
+        
+        // Get messages
+        const messagesSnapshot = await db.collection('chats')
+            .doc(chatId)
+            .collection('messages')
+            .orderBy('timestamp', 'asc')
+            .get();
+            
+        const messages = messagesSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        
+        res.status(200).json(messages);
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ error: 'Error fetching messages: ' + error.message });
+    }
+};
