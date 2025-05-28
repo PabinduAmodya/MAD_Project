@@ -43,3 +43,50 @@ class _ChatScreenState extends State<ChatScreen> {
       _showErrorSnackBar('Error retrieving user ID: $e');
     }
   }
+  Future<void> _startChat() async {
+    if (_currentUserId == null) {
+      _showErrorSnackBar('User ID not found');
+      return;
+    }
+
+    try {
+      debugPrint('Starting Chat with:');
+      debugPrint('Worker ID: ${widget.workerId}');
+      debugPrint('Worker Name: ${widget.workerName}');
+      debugPrint('Current User ID: $_currentUserId');
+
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/chats/start'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.userToken}'
+        },
+        body: json.encode({
+          'workerId': widget.workerId,
+          'userId': _currentUserId
+        }),
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseBody = json.decode(response.body);
+        setState(() {
+          _chatId = responseBody['chatId'];
+          _isLoading = false;
+        });
+        _fetchMessages();
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        _showErrorSnackBar('Failed to start chat: ${response.body}');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showErrorSnackBar('Error starting chat: $e');
+    }
+  }
