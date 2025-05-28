@@ -7,8 +7,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'user_type.dart';
 
-void main() {
-  runApp(const MyApp());
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class MyApp extends StatelessWidget {
