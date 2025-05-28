@@ -316,4 +316,95 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
+    Widget _buildProfileCard() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.yellow[700]!, Colors.amber[800]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.white,
+                child: Text(
+                  workerName != null && workerName!.isNotEmpty 
+                      ? workerName![0].toUpperCase() 
+                      : 'W',
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.yellow[800],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome back,',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      workerName ?? 'Worker',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildStatItem(
+                icon: Icons.star, 
+                label: _isLoadingReviews ? "..." : workerRating.toStringAsFixed(1),
+                sublabel: 'Rating'
+              ),
+              _buildStatItem(
+                icon: Icons.rate_review, 
+                label: _isLoadingReviews ? "..." : reviewsCount.toString(),
+                sublabel: 'Reviews'
+              ),
+              _buildStatItem(
+                icon: Icons.access_time,
+                label: '100%',
+                sublabel: 'On time'
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
 }
