@@ -64,3 +64,31 @@ export const createWorkRequest = async (req, res) => {
     res.status(500).json({ error: 'Error creating work request: ' + error.message });
   }
 };
+// Get work requests for a specific user (their own requests)
+export const getUserWorkRequests = async (req, res) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required to view work requests' });
+    }
+
+    // Get all work requests where userId matches the authenticated user
+    const requestsSnapshot = await db.collection('workRequests')
+      .where('userId', '==', req.user.id)
+      .orderBy('createdAt', 'desc')
+      .get();
+    
+    if (requestsSnapshot.empty) {
+      return res.status(200).json({ message: 'No work requests found', requests: [] });
+    }
+
+    const requests = requestsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching user work requests: ' + error.message });
+  }
+};
