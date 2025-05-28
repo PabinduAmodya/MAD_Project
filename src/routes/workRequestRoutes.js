@@ -25,3 +25,9 @@ import {
 
 // Get a specific work request by ID
 router.get('/:requestId', getWorkRequestById);
+import { 
+  updateWorkRequestStatus 
+} from '../controllers/workRequestController.js';
+
+// Update the status of a work request
+router.patch('/:requestId/status', updateWorkRequestStatus);
