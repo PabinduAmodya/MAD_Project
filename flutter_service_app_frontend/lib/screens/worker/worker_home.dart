@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_service_app/screens/login.dart';
+import 'package:flutter_service_app/screens/worker/worker_notifications_page.dart'; 
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -126,6 +127,50 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
+  }
+
+    void _navigateToWorkRequests() {
+    if (workerId != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserWorkRequestsPage(workerId: workerId!),
+        ),
+      );
+    } else {
+      _showErrorMessage('Unable to load work requests. Please log in again.');
+    }
+  }
+
+  void _navigateToWorkerChats() {
+    if (_isLoading) {
+      _showErrorMessage('Loading user data. Please wait.');
+      return;
+    }
+
+    print('Navigation Data Check:');
+    print('Worker ID: $workerId');
+    print('Worker Name: $workerName');
+    print('Auth Token: $authToken');
+
+    if (workerId != null && authToken != null) {
+      // Use a default name if workerName is null
+      final displayName = workerName ?? "Worker";
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WorkerChatsList(
+            workerId: workerId!, 
+            workerName: displayName,
+            userToken: authToken!
+          ),
+        ),
+      );
+    } else {
+      _showErrorMessage('Unable to load chats. Details missing.');
+      print('Navigation failed: workerId=$workerId, workerName=$workerName, authToken=$authToken');
+    }
   }
 
 }
