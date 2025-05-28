@@ -23,3 +23,15 @@ class WorkRequest {
     }
     return false;
   }
+  // Add a message to the conversation
+  addMessage(senderId, content) {
+    this.messages.push({
+      senderId,
+      content,
+      timestamp: new Date()
+    });
+    this.updateTimestamp();
+  }
+}
+
+export default WorkRequest;
