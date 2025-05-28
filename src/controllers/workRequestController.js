@@ -52,3 +52,15 @@ export const createWorkRequest = async (req, res) => {
     if (workRequest.deadline) {
       workRequestData.deadline = workRequest.deadline;
     }
+    // Save to Firestore
+    const requestRef = await db.collection('workRequests').add(workRequestData);
+
+    res.status(201).json({
+      message: 'Work request created successfully!',
+      requestId: requestRef.id
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating work request: ' + error.message });
+  }
+};
