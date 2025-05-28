@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
@@ -72,6 +73,19 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _showError('Error loading profile: ${e.toString()}');
     }
   }
+    Future<void> _pickImage() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      _showError('Error picking image: $e');
+    }
+  }
+
 @override
   void dispose() {
     _nameController.dispose();
