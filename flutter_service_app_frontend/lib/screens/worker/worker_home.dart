@@ -484,4 +484,77 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       ),
     );
   }
+
+    Widget _buildReviewItem(Map<String, dynamic> review) {
+    // Format timestamp if available
+    String formattedDate = "Recently";
+    if (review['timestamp'] != null) {
+      try {
+        DateTime date = DateTime.parse(review['timestamp']);
+        formattedDate = "${date.day}/${date.month}/${date.year}";
+      } catch (e) {
+        // Keep default "Recently" if parsing fails
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2A2A),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey[800]!,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Client name and date
+          Row(
+            children: [
+              Text(
+                review['userName'] ?? "Client",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                formattedDate,
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Star rating
+          Row(
+            children: List.generate(5, (index) {
+              return Icon(
+                index < (review['rating'] ?? 0) ? Icons.star : Icons.star_outline,
+                color: Colors.amber,
+                size: 18,
+              );
+            }),
+          ),
+          const SizedBox(height: 10),
+          // Review comment
+          Text(
+            review['comment'] ?? "No comment provided.",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
