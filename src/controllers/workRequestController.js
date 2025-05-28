@@ -32,3 +32,23 @@ export const createWorkRequest = async (req, res) => {
       location,
       safeDeadline
     );
+
+        // Prepare work request data, avoiding undefined fields
+    const workRequestData = {
+      userId: workRequest.userId,
+      workerId: workRequest.workerId,
+      title: workRequest.title,
+      userName : workRequest.userName,
+      userPhone : workRequest.userPhone,
+      description: workRequest.description,
+      location: workRequest.location,
+      status: workRequest.status,
+      createdAt: workRequest.createdAt,
+      updatedAt: workRequest.updatedAt,
+      messages: workRequest.messages
+    };
+
+    // Only add deadline if it's not null
+    if (workRequest.deadline) {
+      workRequestData.deadline = workRequest.deadline;
+    }
