@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_service_app/screens/login.dart';
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -51,6 +52,52 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       fetchWorkerReviews();
       // In a real app, you would also fetch notification count here
       // fetchNotificationCount();
+    }
+  }
+
+    // Add method to fetch worker's reviews
+  Future<void> fetchWorkerReviews() async {
+    if (workerId == null) return;
+    
+    setState(() {
+      _isLoadingReviews = true;
+      reviewError = "";
+    });
+    
+    try {
+      var response = await Dio().get(
+        'http://10.0.2.2:5000/api/reviews/$workerId',
+        options: Options(headers: {
+          'Authorization': 'Bearer $authToken'
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          reviews = response.data;
+          _isLoadingReviews = false;
+          
+          // Calculate average rating (in case it's not returned from API)
+          if (reviews.isNotEmpty) {
+            double totalRating = 0;
+            for (var review in reviews) {
+              totalRating += review['rating'] ?? 0;
+            }
+            workerRating = totalRating / reviews.length;
+            reviewsCount = reviews.length;
+          }
+        });
+      } else {
+        setState(() {
+          reviewError = "Failed to load reviews.";
+          _isLoadingReviews = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        reviewError = "Error fetching reviews: ${e.toString()}";
+        _isLoadingReviews = false;
+      });
     }
   }
 }
