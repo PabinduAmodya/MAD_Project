@@ -111,3 +111,24 @@ export const getWorkerWorkRequests = async (req, res) => {
     if (req.user.role !== 'admin' && workerId !== req.user.id) {
       return res.status(403).json({ error: 'Access denied' });
     }
+    // Get all work requests where workerId matches
+    const requestsSnapshot = await db.collection('workRequests')
+      .where('workerId', '==', workerId)
+      .orderBy('createdAt', 'desc')
+      .get();
+    
+    if (requestsSnapshot.empty) {
+      return res.status(200).json({ message: 'No work requests found', requests: [] });
+    }
+
+    // Map each request and add requestId as 'id' in response
+    const requests = requestsSnapshot.docs.map(doc => ({
+      requestId: doc.id,  // Adding requestId field to the response
+      ...doc.data()
+    }));
+
+    res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching worker work requests: ' + error.message });
+  }
+};
