@@ -90,6 +90,38 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
             backgroundColor: Colors.green,
           ),
         );
+         // Clear input fields after successful registration
+        nameController.clear();
+        emailController.clear();
+        passwordController.clear();
+        phoneNoController.clear();
+        locationController.clear();
+        yearsExperienceController.clear();
+        setState(() {
+          selectedWorkType = null;
+          workTypeError = null;
+        });
+      } else {
+        // Error handling
+        Map<String, dynamic> responseData = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${responseData["error"]}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      print('Registration Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Something went wrong! Try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
 
 
 
