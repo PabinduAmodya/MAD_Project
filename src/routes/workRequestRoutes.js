@@ -13,3 +13,9 @@ router.post('/', createWorkRequest);
 router.get('/user', getUserWorkRequests);
 
 export default router;
+import { 
+  getWorkerWorkRequests 
+} from '../controllers/workRequestController.js';
+
+// Get all work requests for a specific worker (worker ID in params)
+router.get('/worker/:workerId?', getWorkerWorkRequests);
