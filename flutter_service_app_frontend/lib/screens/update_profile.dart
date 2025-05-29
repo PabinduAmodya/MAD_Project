@@ -143,6 +143,20 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       ),
     );
   }
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, top: 20, bottom: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Colors.yellow[700],
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
 @override
   void dispose() {
     _nameController.dispose();
