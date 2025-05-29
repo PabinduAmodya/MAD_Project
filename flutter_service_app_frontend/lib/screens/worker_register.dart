@@ -121,6 +121,51 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
       );
     }
   }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Worker Registration", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                buildValidatedTextField(
+                  nameController, 
+                  "Name", 
+                  Icons.person,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Name is required';
+                    }
+                    if (value.trim().length < 2) {
+                      return 'Name must be at least 2 characters';
+                    }
+                    return null;
+                  }
+                ),
+                buildValidatedTextField(
+                  emailController, 
+                  "Email", 
+                  Icons.email,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Email is required';
+                    }
+                    if (!isValidEmail(value.trim())) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  }
+                ),
+
 
 
 
