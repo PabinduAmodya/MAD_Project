@@ -10,3 +10,14 @@ class WorkRequestsPage extends StatefulWidget {
   _WorkRequestsPageState createState() => _WorkRequestsPageState();
 }
 
+class _WorkRequestsPageState extends State<WorkRequestsPage> {
+  List<dynamic> workRequests = [];
+  bool isLoading = true;
+  String errorMessage = "";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWorkRequests();
+  }
+
