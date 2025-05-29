@@ -415,6 +415,28 @@ class _UserWorkRequestsPageState extends State<UserWorkRequestsPage> {
         return Colors.grey; // Default fallback
     }
   }
+  
+   // Updated deadline formatting with more robust error handling
+  String _formatDeadline(dynamic deadlineInput) {
+    if (deadlineInput == null) return 'No deadline';
+    
+    try {
+      String? deadlineString;
+      if (deadlineInput is String) {
+        deadlineString = deadlineInput;
+      } else if (deadlineInput is Map) {
+        deadlineString = deadlineInput['deadline']?.toString();
+      }
+
+      if (deadlineString == null) return 'No deadline';
+
+      final DateTime deadline = DateTime.parse(deadlineString);
+      return '${deadline.day}/${deadline.month}/${deadline.year}';
+    } catch (e) {
+      print('Deadline parsing error: $e');
+      return 'Invalid date';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
