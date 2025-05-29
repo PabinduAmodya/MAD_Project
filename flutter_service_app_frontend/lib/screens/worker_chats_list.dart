@@ -115,3 +115,56 @@ class _WorkerChatsListState extends State<WorkerChatsList> {
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
             )
+          : ListView.builder(
+              itemCount: _chatsList.length,
+              itemBuilder: (context, index) {
+                final chat = _chatsList[index];
+                return ListTile(
+                  tileColor: Colors.white10,
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.yellow[700],
+                    child: Icon(Icons.person, color: Colors.black),
+                  ),
+                  title: Text(
+                    chat['userName'], 
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Text(
+                    chat['lastMessage'], 
+                    style: TextStyle(color: Colors.white70),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Text(
+                    _formatTimestamp(chat['timestamp']),
+                    style: TextStyle(color: Colors.white54, fontSize: 12),
+                  ),
+                  onTap: () => _navigateToChat(
+                    chat['userId'], 
+                    chat['userName']
+                  ),
+                );
+              },
+            ),
+    );
+  }
+
+  String _formatTimestamp(String? timestamp) {
+    if (timestamp == null) return '';
+    try {
+      final dateTime = DateTime.parse(timestamp);
+      final now = DateTime.now();
+      final difference = now.difference(dateTime);
+
+      if (difference.inHours < 24) {
+        return '${difference.inHours}h ago';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays}d ago';
+      } else {
+        return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+}
