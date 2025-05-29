@@ -1,0 +1,108 @@
+import { db } from '../firebase.js';
+import User from '../models/userModel.js';
+import Worker from '../models/workerModel.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+export const registerUser = async (req, res) => {
+  try {
+    const { name, email, password, role, workType, location, yearsOfExperience, phoneNo } = req.body;
+
+    // 🔹 Ensure required fields are provided
+    if (!name || !email || !password || !phoneNo) {
+      return res.status(400).json({ error: 'Name, email, password, and phone number are required!' });
+    }
+
+    // 🔹 Validate worker fields if registering as a worker
+    if (role === 'worker' && (!workType || !location || !yearsOfExperience)) {
+      return res.status(400).json({ error: 'Work type, location, and years of experience are required for workers!' });
+    }
+
+    // 🔹 Prevent unauthorized admin registration
+    if (role === 'admin') {
+      if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Only an admin can create another admin account!' });
+      }
+    }
+
+    // 🔹 Check if the user already exists
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (!userSnapshot.empty) {
+      return res.status(400).json({ error: 'User with this email already exists!' });
+    }
+
+    // 🔹 Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 🔹 Create a new user object based on role
+    const newUser = (role === 'worker')
+      ? new Worker(name, email, hashedPassword, workType, location, yearsOfExperience, phoneNo) // Include phoneNo
+      : new User(name, email, hashedPassword, phoneNo); // Include phoneNo for user
+
+
+
+
+
+    
+
+    // 🔹 Send success response
+    return res.status(201).json({
+      message: 'User registered successfully!',
+      userId: userRef.id
+    });
+
+  } catch (error) {
+    console.error('Registration Error:', error); // Log entire error object
+    return res.status(500).json({ error: `Registration failed: ${error.message || error}` });
+  }
+};
+
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      console.log("Email or password missing!");
+      return res.status(400).json({ error: 'Email and password are required!' });
+    }
+
+    // Check if the user exists in Firestore
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (userSnapshot.empty) {
+      console.log('User not found for email: ', email);
+      return res.status(400).json({ error: 'User not found!' });
+    }
+
+    const userDoc = userSnapshot.docs[0];  // Get first matching document
+    const user = userDoc.data();  // Get user data
+    const userId = userDoc.id;  // Get Firestore document ID
+
+    console.log("User found: ", userId);
+
+    // Compare provided password with stored hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.log('Password mismatch for user: ', email);
+      return res.status(400).json({ error: 'Wrong Password!' });
+    }
+
+    // Respond with a token
+    const token = jwt.sign({ id: userId, email: user.email, role: user.role }, process.env.JWT_SECRET || "Secret_Key-7973", { expiresIn: '1h' });
+    
+    console.log('Login successful for user: ', email);
+    res.json({
+      message: "Login successful!",
+      token: token,
+      user: {
+        id: userId,  
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: 'Error logging in: ' + error.message });
+  }
+};
