@@ -190,3 +190,35 @@ export const markMessagesAsRead = async (req, res) => {
         res.status(500).json({ error: 'Error marking messages as read: ' + error.message });
     }
 };
+export const getWorkerChats = async (req, res) => {
+    try {
+      const { workerId } = req.params;
+      
+      // Query chats where the worker is a participant
+      const chatsQuery = await db.collection('chats')
+        .where('users', 'array-contains', workerId)
+        .get();
+      
+      const chats = await Promise.all(chatsQuery.docs.map(async (doc) => {
+        const chatData = doc.data();
+        const otherUserId = chatData.users.find(id => id !== workerId);
+        
+        // Fetch other user's details
+        const userDoc = await db.collection('users').doc(otherUserId).get();
+        const userData = userDoc.data();
+        
+        return {
+          chatId: doc.id,
+          userId: otherUserId,
+          userName: userData?.name || 'Unknown User',
+          lastMessage: chatData.lastMessage,
+          timestamp: chatData.timestamp
+        };
+      }));
+      
+      res.status(200).json(chats);
+    } catch (error) {
+      console.error('Error fetching worker chats:', error);
+      res.status(500).json({ error: 'Error fetching worker chats' });
+    }
+};
