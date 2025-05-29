@@ -415,7 +415,13 @@ class _UserWorkRequestsPageState extends State<UserWorkRequestsPage> {
         return Colors.grey; // Default fallback
     }
   }
-  
+   // Safe string retrieval method with default return
+  String _safeGetString(dynamic data, String key, [String defaultValue = '']) {
+    if (data is Map && data.containsKey(key)) {
+      return data[key]?.toString() ?? defaultValue;
+    }
+    return defaultValue;
+  }
    // Updated deadline formatting with more robust error handling
   String _formatDeadline(dynamic deadlineInput) {
     if (deadlineInput == null) return 'No deadline';
