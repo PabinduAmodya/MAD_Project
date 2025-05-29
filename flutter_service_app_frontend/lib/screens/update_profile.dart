@@ -203,6 +203,87 @@ Widget _buildTextField({
       ),
     );
   }
+   Widget _buildProfileImageSection() {
+    return Center(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 120,
+                width: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.yellow[700],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.yellow[700]!.withOpacity(0.3),
+                      blurRadius: 15,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: _imageFile != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(60),
+                        child: Image.file(
+                          _imageFile!,
+                          fit: BoxFit.cover,
+                          height: 120,
+                          width: 120,
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          _nameController.text.isNotEmpty
+                              ? _nameController.text[0].toUpperCase()
+                              : 'W',
+                          style: const TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+              ),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.yellow[700]!, width: 2),
+                    ),
+                    child: Icon(
+                      Icons.camera_alt,
+                      color: Colors.yellow[700],
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: _pickImage,
+            child: Text(
+              'Change Profile Picture',
+              style: TextStyle(
+                color: Colors.yellow[700],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 @override
   void dispose() {
     _nameController.dispose();
