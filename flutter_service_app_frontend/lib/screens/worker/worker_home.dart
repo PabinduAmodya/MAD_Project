@@ -3,6 +3,7 @@ import 'package:flutter_service_app/screens/login.dart';
 import 'package:flutter_service_app/screens/worker/worker_notifications_page.dart'; 
 import 'package:flutter_service_app/screens/worker/worker_chats_list.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_service_app/screens/login.dart';
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -699,7 +700,45 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
           ),
         ],
       ),
-    )
+      body: _isLoading 
+        ? Center(
+            child: CircularProgressIndicator(
+              color: Colors.yellow[700],
+            ),
+          )
+        : RefreshIndicator(
+            onRefresh: () async {
+              await _loadUserData();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  _buildProfileCard(),
+                  _buildAvailabilityToggle(),
+                  const SizedBox(height: 16),
+                  // Add reviews section here
+                  _buildReviewsSection(),
+                  const SizedBox(height: 16),
+                  _buildDashboardButton(
+                    icon: Icons.work_outline,
+                    label: 'Work Requests',
+                    subtitle: 'View and manage customer requests',
+                    onPressed: _navigateToWorkRequests,
+                    color: Colors.blue[700]!,
+                  ),
+                  _buildDashboardButton(
+                    icon: Icons.message_outlined,
+                    label: 'My Chats',
+                    subtitle: 'Communicate with customers',
+                    onPressed: _navigateToWorkerChats,
+                    color: Colors.green[700]!,
+                  ),
+                ]
+              ),
+            ),
+        ),
+    );
 
   }
 }
