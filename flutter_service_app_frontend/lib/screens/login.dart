@@ -11,17 +11,6 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  bool isLoading = false;
-  // This widget is the root of your application.
-
-  @override
   void initState() {
     super.initState();
     _checkLoginStatus();
@@ -41,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
-
   
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
