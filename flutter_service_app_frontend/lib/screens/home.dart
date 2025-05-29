@@ -5,11 +5,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_service_app/screens/login.dart';
 import 'package:flutter_service_app/screens/all_services.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
