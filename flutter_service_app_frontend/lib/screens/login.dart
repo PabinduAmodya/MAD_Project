@@ -14,9 +14,11 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
