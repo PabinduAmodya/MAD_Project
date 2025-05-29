@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'Plumbers.dart'; // Import the Plumber page
 
 class AllServicesScreen extends StatelessWidget {
-    const AllServicesScreen({super.key});
+  const AllServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,43 @@ class AllServicesScreen extends StatelessWidget {
               services[index]["title"]
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceTile(BuildContext context, IconData icon, String title) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to PlumberPage when the Plumber tile is tapped
+        if (title == 'Plumber') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlumberPage()),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.yellow[700],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 30, color: Colors.black),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
