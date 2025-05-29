@@ -179,6 +179,46 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
                     }
                     return null;
                   }
+                    ),
+                buildValidatedTextField(
+                  phoneNoController, 
+                  "Phone Number", 
+                  Icons.phone,
+                  keyboardType: TextInputType.phone,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Phone number is required';
+                    }
+                    if (!isValidPhone(value.trim())) {
+                      return 'Please enter a valid 10-digit phone number';
+                    }
+                    return null;
+                  }
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: "Work Type",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                        errorText: workTypeError,
+                      ),
+                      value: selectedWorkType,
+                      items: workTypes.map((type) {
+                        return DropdownMenuItem(value: type, child: Text(type));
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedWorkType = value;
+                          workTypeError = null; // Clear error when user selects
+                        });
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                  ],
+                ),
+
 
 
 
