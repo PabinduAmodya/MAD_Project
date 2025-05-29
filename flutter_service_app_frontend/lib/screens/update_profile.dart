@@ -11,6 +11,7 @@ class UpdateProfileScreen extends StatefulWidget {
   _UpdateProfileScreenState createState() => _UpdateProfileScreenState();
 }
 
+
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = true;
@@ -66,14 +67,17 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           _experienceController.text = userData['yearsOfExperience']?.toString() ?? '';
           _isLoading = false;
         });
+        
       } else {
         _showError('Failed to load profile data');
       }
+      
     } catch (e) {
       _showError('Error loading profile: ${e.toString()}');
     }
   }
     Future<void> _pickImage() async {
+      
     try {
       final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
@@ -81,11 +85,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           _imageFile = File(pickedFile.path);
         });
       }
+      
     } catch (e) {
       _showError('Error picking image: $e');
     }
   }
  Future<void> _updateProfile() async {
+   
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isUpdating = true;
@@ -283,7 +289,100 @@ Widget _buildTextField({
       ),
     );
   }
-
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        backgroundColor: Colors.yellow[700],
+        elevation: 0,
+        title: const Text(
+          'Update Profile',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(color: Colors.yellow[700]),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      _buildProfileImageSection(),
+                      const SizedBox(height: 30),
+                      
+                      _buildSectionTitle('Personal Information'),
+                      _buildTextField(
+                        label: 'Full Name',
+                        controller: _nameController,
+                        icon: Icons.person,
+                      ),
+                      _buildTextField(
+                        label: 'Phone Number',
+                        controller: _phoneController,
+                        icon: Icons.phone,
+                        keyboardType: TextInputType.phone,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildTextField(
+                        label: 'Email',
+                        controller: _emailController,
+                        icon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      
+                      _buildSectionTitle('Professional Information'),
+                      _buildTextField(
+                        label: 'Location',
+                        controller: _locationController,
+                        icon: Icons.location_on,
+                      ),
+                      _buildTextField(
+                        label: 'Work Type',
+                        controller: _workTypeController,
+                        icon: Icons.work,
+                      ),
+                      _buildTextField(
+                        label: 'Years of Experience',
+                        controller: _experienceController,
+                        icon: Icons.timeline,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your experience';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Please enter a valid number';
+                          }
+                          return null;
+                        },
+                      ),
+                   
+    
 @override
   void dispose() {
     _nameController.dispose();
