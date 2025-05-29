@@ -232,6 +232,29 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
                     return null;
                   }
                 ),
+                buildValidatedTextField(
+                  yearsExperienceController, 
+                  "Years of Experience", 
+                  Icons.accessibility_new,
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Years of experience is required';
+                    }
+                    final experience = int.tryParse(value.trim());
+                    if (experience == null) {
+                      return 'Please enter a valid number';
+                    }
+                    if (experience < 0) {
+                      return 'Years of experience cannot be negative';
+                    }
+                    if (experience > 50) {
+                      return 'Years of experience seems too high';
+                    }
+                    return null;
+                  }
+                ),
+
 
 
 
