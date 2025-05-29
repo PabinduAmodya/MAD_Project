@@ -75,4 +75,35 @@ class _WorkRequestsPageState extends State<WorkRequestsPage> {
     }
   }
 
+   // Function to submit a review
+  Future<void> submitReview(String workerId, double rating, String comment) async {
+    try {
+      var response = await Dio().post(
+        'http://10.0.2.2:5000/api/reviews/$workerId',
+        data: {
+          'rating': rating,
+          'comment': comment,
+        },
+        options: Options(headers: {'Authorization': 'Bearer ${widget.userToken}'}),
+      );
+
+      if (response.statusCode == 201) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Review submitted successfully!')),
+        );
+      } else {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.data['error'] ?? 'Failed to submit review')),
+        );
+      }
+    } catch (e) {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error submitting review: ${e.toString()}')),
+      );
+    }
+  }
+
 
