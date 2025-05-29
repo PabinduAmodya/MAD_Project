@@ -58,3 +58,32 @@ export const addReview = async (req, res) => {
     }
 };
 
+// Similarly modify getWorkerReviews
+export const getWorkerReviews = async (req, res) => {
+    try {
+        const { workerId } = req.params;
+        const workerRef = db.collection("users").doc(workerId);
+        
+        // Check if worker exists
+        const workerSnap = await workerRef.get();
+        if (!workerSnap.exists) {
+            return res.status(404).json({ error: "Worker not found." });
+        }
+        
+        // Verify the user is a worker
+        const workerData = workerSnap.data();
+        if (workerData.role !== 'worker') {
+            return res.status(400).json({ error: "The specified user is not a worker." });
+        }
+        
+        const reviewsSnap = await workerRef.collection("reviews")
+            .orderBy("timestamp", "desc")
+            .get();
+            
+        const reviews = reviewsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching reviews: " + error.message });
+    }
+};
+
