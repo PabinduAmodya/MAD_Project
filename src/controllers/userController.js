@@ -39,11 +39,15 @@ export const registerUser = async (req, res) => {
       ? new Worker(name, email, hashedPassword, workType, location, yearsOfExperience, phoneNo) // Include phoneNo
       : new User(name, email, hashedPassword, phoneNo); // Include phoneNo for user
 
+// 🔹 Save user to Firestore
+    const userRef = await db.collection('users').add({
+      ...newUser,
+      createdAt: new Date().toISOString()
+    });
 
-
-
-
-    
+    if (!userRef.id) {
+      throw new Error("User registration failed at Firestore");
+    }
 
     // 🔹 Send success response
     return res.status(201).json({
