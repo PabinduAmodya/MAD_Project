@@ -218,6 +218,21 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
                     SizedBox(height: 16.0),
                   ],
                 ),
+                buildValidatedTextField(
+                  locationController, 
+                  "Location", 
+                  Icons.location_on,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Location is required';
+                    }
+                    if (value.trim().length < 2) {
+                      return 'Location must be at least 2 characters';
+                    }
+                    return null;
+                  }
+                ),
+
 
 
 
