@@ -162,4 +162,85 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      body: _isLoading 
+        ? Center(
+            child: CircularProgressIndicator(
+              color: Colors.yellow[700],
+            ),
+          )
+        : Column(
+            children: [
+              Expanded(
+                child: _messages.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No messages yet',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      reverse: true,
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final message = _messages[_messages.length - 1 - index];
+                        final bool isMe = message['senderId'] == _currentUserId;
+
+                        return Align(
+                          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isMe ? Colors.yellow[700] : Colors.grey[800],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              message['message'],
+                              style: TextStyle(
+                                color: isMe ? Colors.black : Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: 'Type a message...',
+                          fillColor: Colors.grey[800],
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    CircleAvatar(
+                      backgroundColor: Colors.yellow[700],
+                      child: IconButton(
+                        icon: const Icon(Icons.send, color: Colors.black),
+                        onPressed: _sendMessage,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+}
 
