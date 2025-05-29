@@ -31,36 +31,62 @@ class LoginScreen extends StatefulWidget {
     }
   }
   
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+Future<void> loginUser(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final url = Uri.parse('http://10.0.2.2:5000/api/users/login');
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      isLoading = true;
     });
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email, 'password': password}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', data['token']);
+        await prefs.setString('user_role', data['user']['role']);
+        await prefs.setString('user_id', data['user']['id']);
+        await prefs.setString('name', data['user']['name']);
+
+        _showSnackBar("Login successful!");
+
+        switch (data['user']['role']) {
+          case 'user':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+            break;
+          case 'worker':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => WorkerHomeScreen()));
+            break;
+          case 'admin':
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AdminHomeScreen()));
+            break;
+        }
+      } else {
+        final data = json.decode(response.body);
+        _showSnackBar("Login failed: ${data['error'] ?? 'Invalid credentials'}");
+      }
+    } catch (e) {
+      _showSnackBar("An error occurred: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.yellow[700]),
+    );
   }
 
   @override
