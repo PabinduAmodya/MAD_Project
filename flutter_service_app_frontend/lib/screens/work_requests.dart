@@ -106,4 +106,22 @@ class _WorkRequestsPageState extends State<WorkRequestsPage> {
     }
   }
 
+  // Navigate to payment page
+  void navigateToPayment(dynamic request) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentPage(
+          userToken: widget.userToken,
+          requestId: request['id'],
+          workerName: request['workerName'] ?? 'Worker',
+          requestTitle: request['title'] ?? 'Work Request',
+        ),
+      ),
+    ).then((_) {
+      // Refresh work requests when returning from payment page
+      fetchWorkRequests();
+    });
+  }
+
 
