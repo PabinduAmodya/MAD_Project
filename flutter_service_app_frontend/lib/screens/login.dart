@@ -110,6 +110,6 @@ Future<void> loginUser(BuildContext context) async {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.yellow[700],
+                  color: Colors.blue[700],
                 ),
               ),
