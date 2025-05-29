@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_service_app/screens/login.dart';
-import 'package:flutter_service_app/screens/worker/worker_notifications_page.dart'; 
+import 'package:flutter_service_app/screens/worker/update_profile.dart';
+import 'package:flutter_service_app/screens/worker/user_work_requests.dart';
 import 'package:flutter_service_app/screens/worker/worker_chats_list.dart';
+import 'package:flutter_service_app/screens/worker/worker_notifications_page.dart'; // Added import
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_service_app/screens/login.dart';
-
-class WorkerHomeScreen extends StatefulWidget {
-  const WorkerHomeScreen({super.key});
-
-  @override
-  _WorkerHomeScreenState createState() => _WorkerHomeScreenState();
-}
 
 class WorkerHomeScreen extends StatefulWidget {
   const WorkerHomeScreen({super.key});
@@ -132,7 +127,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
-    void _navigateToWorkRequests() {
+  void _navigateToWorkRequests() {
     if (workerId != null) {
       Navigator.push(
         context,
@@ -255,7 +250,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
-   Widget _buildAvailabilityToggle() {
+  Widget _buildAvailabilityToggle() {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -318,7 +313,7 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
-    Widget _buildProfileCard() {
+  Widget _buildProfileCard() {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(24),
@@ -486,7 +481,8 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
-    Widget _buildReviewItem(Map<String, dynamic> review) {
+  // Review item widget
+  Widget _buildReviewItem(Map<String, dynamic> review) {
     // Format timestamp if available
     String formattedDate = "Recently";
     if (review['timestamp'] != null) {
@@ -647,10 +643,10 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
     );
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-         backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         backgroundColor: Colors.yellow[700],
         elevation: 0,
@@ -734,11 +730,52 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
                     onPressed: _navigateToWorkerChats,
                     color: Colors.green[700]!,
                   ),
-                ]
+                  // Add a new button for notifications
+                  _buildDashboardButton(
+                    icon: Icons.notifications_active,
+                    label: 'Notifications',
+                    subtitle: 'View your latest notifications',
+                    onPressed: _navigateToNotifications,
+                    color: Colors.red[700]!,
+                  ),
+                  _buildDashboardButton(
+                    icon: Icons.calendar_today,
+                    label: 'My Schedule',
+                    subtitle: 'View your upcoming appointments',
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Schedule feature coming soon!'),
+                          backgroundColor: Colors.yellow[700],
+                        ),
+                      );
+                    },
+                    color: Colors.purple[700]!,
+                  ),
+                  _buildDashboardButton(
+                    icon: Icons.account_circle,
+                    label: 'Profile',
+                    subtitle: 'Update your profile information',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UpdateProfileScreen(),
+                        ),
+                      ).then((updated) {
+                        // If profile was updated, refresh the data
+                        if (updated == true) {
+                          _loadUserData();
+                        }
+                      });
+                    },
+                    color: Colors.orange[700]!,
+                  ),
+                  const SizedBox(height: 24),
+                ],
               ),
             ),
-        ),
+          ),
     );
-
   }
 }
