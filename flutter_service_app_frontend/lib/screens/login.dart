@@ -126,3 +126,14 @@ Future<void> loginUser(BuildContext context) async {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : () => loginUser(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow[700],
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  ),
