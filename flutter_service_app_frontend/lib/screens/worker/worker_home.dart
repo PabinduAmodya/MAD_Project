@@ -645,4 +645,61 @@ class _WorkerHomeScreenState extends State<WorkerHomeScreen> {
       ),
     );
   }
+
+   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+         backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        backgroundColor: Colors.yellow[700],
+        elevation: 0,
+        title: const Text(
+          'Worker Dashboard', 
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          // Add notification icon with badge
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications, color: Colors.black),
+                onPressed: _navigateToNotifications,
+              ),
+              if (notificationCount > 0)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      notificationCount > 9 ? '9+' : notificationCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: logout,
+          ),
+        ],
+      ),
+    )
+
+  }
 }
