@@ -381,8 +381,42 @@ Widget _buildTextField({
                           return null;
                         },
                       ),
-                   
-    
+                       const SizedBox(height: 40),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isUpdating ? null : _updateProfile,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.yellow[700],
+                            foregroundColor: Colors.black,
+                            disabledBackgroundColor: Colors.grey,
+                            disabledForegroundColor: Colors.black54,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 5,
+                          ),
+                          child: _isUpdating
+                              ? const CircularProgressIndicator(color: Colors.black)
+                              : const Text(
+                                  'SAVE CHANGES',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    );
+  }    
 @override
   void dispose() {
     _nameController.dispose();
