@@ -398,6 +398,23 @@ class _UserWorkRequestsPageState extends State<UserWorkRequestsPage> {
       },
     );
   }
+   // Updated color method with default return
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'pending':
+        return Colors.orange;
+      case 'accepted':
+        return Colors.blue;
+      case 'completed':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      case 'cancelled':
+        return Colors.grey;
+      default:
+        return Colors.grey; // Default fallback
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
