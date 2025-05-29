@@ -113,3 +113,16 @@ Future<void> loginUser(BuildContext context) async {
                   color: Colors.blue[700],
                 ),
               ),
+              const SizedBox(height: 20),
+
+              buildTextField(
+                controller: emailController,
+                label: "Email",
+                icon: Icons.email,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return "Email is required";
+                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  if (!emailRegex.hasMatch(value)) return "Enter a valid email";
+                  return null;
+                },
+              ),
