@@ -5,11 +5,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_service_app/screens/login.dart';
 import 'package:flutter_service_app/screens/all_services.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -39,19 +39,19 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-
+    
     // Navigate to different screens based on index
     switch (index) {
-      case 0:
-      // Home screen, do nothing as we're already here
+      case 0: 
+        // Home screen, do nothing as we're already here
         break;
-      case 1:
+      case 1: 
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AllServicesScreen()),
         );
         break;
-      case 2:
+      case 2: 
         _navigateToWorkRequests();
         break;
       case 3:
@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
+  
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         title: const Text(
-          "QuickFix",
+          "QuickFix", 
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Icon(Icons.error_outline, color: Colors.red, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    'Error: ${snapshot.error}',
+                    'Error: ${snapshot.error}', 
                     style: const TextStyle(color: Colors.white),
                   ),
                 ],
@@ -253,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 20),
 
                 // Image Slider with improved styling
@@ -270,19 +270,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     items: [
                       _buildPromoBanner(
-                        "30% Off First Order",
-                        "New customers get 30% off",
+                        "30% Off First Order", 
+                        "New customers get 30% off", 
                         Colors.indigo,
                         "assets/banner1.jpg",
                       ),
                       _buildPromoBanner(
-                        "Skilled Professionals",
+                        "Skilled Professionals", 
                         "Verified experts at your service",
                         Colors.brown[800]!,
                         "assets/banner2.jpg",
                       ),
                       _buildPromoBanner(
-                        "Quick Response",
+                        "Quick Response", 
                         "Service at your doorstep in 60 minutes",
                         Colors.teal[800]!,
                         "assets/banner3.jpg",
@@ -290,9 +290,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 24),
-
+                
                 // Popular Services Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -307,13 +307,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white,
                         ),
                       ),
-
+                      
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 16),
-
+                
                 // Services Grid with improved styling
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -334,9 +334,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 24),
-
+                
                 // Recent Services Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -368,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-
+                
                 const SizedBox(height: 24),
               ],
             ),
@@ -569,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: isMoreButton ? Colors.black : Colors.white10,
           borderRadius: BorderRadius.circular(12),
-          border: isMoreButton
+          border: isMoreButton 
               ? Border.all(color: Colors.yellow[700]!, width: 1.5)
               : null,
           boxShadow: [
@@ -591,8 +591,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                icon,
-                size: 24,
+                icon, 
+                size: 24, 
                 color: Colors.black,
               ),
             ),
@@ -615,7 +615,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Recent service card
   Widget _buildRecentServiceCard(String serviceType, String description, String status, String date) {
     final Color statusColor = status == "Completed" ? Colors.green : Colors.blue;
-
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
