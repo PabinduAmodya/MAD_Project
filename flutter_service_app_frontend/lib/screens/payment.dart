@@ -135,5 +135,249 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Payment Details'),
+        backgroundColor: Colors.black,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Payment summary section
+                Card(
+                  elevation: 4,
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Payment Summary',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Service:'),
+                            Flexible(
+                              child: Text(
+                                widget.requestTitle,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Worker:'),
+                            Text(
+                              widget.workerName,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // Payment amount field
+                Text(
+                  'Amount',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                TextFormField(
+                  controller: _amountController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.attach_money),
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter payment amount',
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  ),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an amount';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Please enter a valid amount';
+                    }
+                    if (double.parse(value) <= 0) {
+                      return 'Amount must be greater than zero';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                
+                // Card information section
+                Text(
+                  'Card Information',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                
+                // Card number field
+                TextFormField(
+                  controller: _cardNumberController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.credit_card),
+                    border: OutlineInputBorder(),
+                    hintText: 'Card Number',
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(16),
+                    _CardNumberFormatter(),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter card number';
+                    }
+                    // Remove spaces for validation
+                    String cardNumber = value.replaceAll(' ', '');
+                    if (cardNumber.length < 16) {
+                      return 'Card number must be 16 digits';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                
+                // Expiry date and CVV row
+                Row(
+                  children: [
+                    // Expiry date field
+                    Expanded(
+                      child: TextFormField(
+                        controller: _expiryDateController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.date_range),
+                          border: OutlineInputBorder(),
+                          hintText: 'MM/YY',
+                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(4),
+                          _ExpiryDateFormatter(),
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter expiry date';
+                          }
+                          if (value.length < 5) {
+                            return 'Invalid format';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    
+                    // CVV field
+                    Expanded(
+                      child: TextFormField(
+                        controller: _cvvController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.security),
+                          border: OutlineInputBorder(),
+                          hintText: 'CVV',
+                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter CVV';
+                          }
+                          if (value.length < 3) {
+                            return 'CVV must be 3 digits';
+                          }
+                          return null;
+                        },
+                        obscureText: true,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                
+                // Cardholder name field
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                    hintText: 'Cardholder Name',
+                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter cardholder name';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 30),
+                
+                // Pay Now button
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _isProcessing ? null : processPayment,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow[700],
+                      foregroundColor: const Color.fromARGB(255, 6, 6, 6),
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: _isProcessing
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text('PAY NOW'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}  
       }
