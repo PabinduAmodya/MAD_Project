@@ -65,6 +65,75 @@ class _PaymentPageState extends State<PaymentPage> {
           _isProcessing = false;
         });
 
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          // Show success dialog
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Payment Successful'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 60,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Your payment to ${widget.workerName} has been processed successfully!',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      Navigator.pop(context); // Go back to work requests page
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          // Show error dialog
+          showErrorDialog(response.data['error'] ?? 'Payment failed. Please try again.');
+        }
+      } catch (e) {
+        setState(() {
+          _isProcessing = false;
+        });
+        showErrorDialog('Error processing payment: ${e.toString()}');
+      }
+    }
+  }
 
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Payment Failed'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
+  
       }
