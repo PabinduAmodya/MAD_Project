@@ -124,4 +124,63 @@ class _WorkRequestsPageState extends State<WorkRequestsPage> {
     });
   }
 
+  // Show review dialog
+  void showReviewDialog(String workerId, String workerName) {
+    double selectedRating = 3.0;
+    final TextEditingController commentController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rate $workerName'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RatingBar.builder(
+                initialRating: selectedRating,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: false,
+                itemCount: 5,
+                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  selectedRating = rating;
+                },
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: commentController,
+                decoration: InputDecoration(
+                  labelText: 'Comments',
+                  hintText: 'Tell us about your experience...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              submitReview(workerId, selectedRating, commentController.text);
+              Navigator.pop(context);
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
