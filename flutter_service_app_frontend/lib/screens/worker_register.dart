@@ -302,6 +302,8 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(color: Colors.red),
           ),
+          focusedErrorBorder: OutlineInputBorder(
+
 
 
 
