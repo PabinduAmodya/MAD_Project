@@ -182,5 +182,63 @@ class _WorkRequestsPageState extends State<WorkRequestsPage> {
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("My Work Requests"),
+        backgroundColor: Colors.black,
+      ),
+      body: RefreshIndicator(
+        onRefresh: fetchWorkRequests,
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : errorMessage.isNotEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 70,
+                            color: Colors.red[300],
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            "Error",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            errorMessage,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.red[700],
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.refresh),
+                            label: Text("Try Again"),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            ),
+                            onPressed: fetchWorkRequests,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+
+        }
+
 
 
