@@ -16,7 +16,7 @@ export const addReview = async (req, res) => {
             return res.status(400).json({ error: "Rating must be between 1 and 5." });
         }
 
-    
+
         
         // Check if worker exists in users collection
         const workerRef = db.collection("users").doc(workerId);
