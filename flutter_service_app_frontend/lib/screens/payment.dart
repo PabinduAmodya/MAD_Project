@@ -39,3 +39,32 @@ class _PaymentPageState extends State<PaymentPage> {
     _nameController.dispose();
     super.dispose();
   }
+
+  Future<void> processPayment() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isProcessing = true;
+      });
+
+      try {
+        var response = await Dio().post(
+          'http://10.0.2.2:5000/api/payments/${widget.requestId}',
+          data: {
+            'amount': double.parse(_amountController.text),
+            'cardDetails': {
+              'cardNumber': _cardNumberController.text,
+              'expiryDate': _expiryDateController.text,
+              'cvv': _cvvController.text,
+              'cardholderName': _nameController.text,
+            }
+          },
+          options: Options(headers: {'Authorization': 'Bearer ${widget.userToken}'}),
+        );
+
+        setState(() {
+          _isProcessing = false;
+        });
+
+
+
+      }
