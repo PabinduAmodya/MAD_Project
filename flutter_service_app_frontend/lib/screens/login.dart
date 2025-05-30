@@ -137,3 +137,51 @@ Future<void> loginUser(BuildContext context) async {
                     padding: const EdgeInsets.symmetric(vertical: 15.0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                   ),
+child: isLoading
+                      ? const CircularProgressIndicator(color: Colors.black)
+                      : const Text("Login", style: TextStyle(fontSize: 18, color: Colors.black)),
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => UserTypeScreen()));
+                  },
+                  child: Text(
+                    "Don't have an account? Register",
+                    style: TextStyle(color: Colors.yellow[700], fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscureText = false,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      validator: validator,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.white),
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white),
+        filled: true,
+        fillColor: Colors.black12,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+      ),
+      style: const TextStyle(color: Colors.white),
+    );
+  }
+}
