@@ -132,3 +132,84 @@ export const getAllWorkers = async (req, res) => {
       res.status(500).json({ error: 'Error fetching workers: ' + error.message });
   }
 };
+export const updateWorkerProfile = async (req, res) => {
+  try {
+    const { workerId } = req.params;
+    const { name, email, phoneNo, workType, location, yearsOfExperience } = req.body;
+    const requestingUserId = req.user.id; // From JWT token
+
+    // Check if the requesting user is updating their own profile
+    if (requestingUserId !== workerId) {
+      return res.status(403).json({ error: 'You can only update your own profile!' });
+    }
+
+    // Get the user document
+    const userRef = db.collection('users').doc(workerId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'Worker not found!' });
+    }
+
+    const userData = userDoc.data();
+
+    // Check if the user is actually a worker
+    if (userData.role !== 'worker') {
+      return res.status(400).json({ error: 'Only workers can update worker profiles!' });
+    }
+
+    // Prepare update data
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (phoneNo) updateData.phoneNo = phoneNo;
+    if (workType) updateData.workType = workType;
+    if (location) updateData.location = location;
+    if (yearsOfExperience) updateData.yearsOfExperience = yearsOfExperience;
+
+    // Update the document
+    await userRef.update({
+      ...updateData,
+      updatedAt: new Date().toISOString()
+    });
+
+    // Get the updated document to return
+    const updatedDoc = await userRef.get();
+
+    return res.status(200).json({
+      message: 'Worker profile updated successfully!',
+      worker: {
+        id: updatedDoc.id,
+        ...updatedDoc.data()
+      }
+    });
+
+  } catch (error) {
+    console.error('Update Worker Profile Error:', error);
+    return res.status(500).json({ error: `Profile update failed: ${error.message || error}` });
+  }
+};
+
+export const getWorkerProfile = async (req, res) => {
+  try {
+    const { workerId } = req.params;
+
+    const workerDoc = await db.collection('users').doc(workerId).get();
+    
+    if (!workerDoc.exists) {
+      return res.status(404).json({ error: 'Worker not found!' });
+    }
+
+    const workerData = workerDoc.data();
+
+    if (workerData.role !== 'worker') {
+      return res.status(400).json({ error: 'User is not a worker!' });
+    }
+
+    return res.status(200).json(workerData);
+
+  } catch (error) {
+    console.error('Get Worker Error:', error);
+    return res.status(500).json({ error: `Failed to get worker: ${error.message || error}` });
+  }
+};
