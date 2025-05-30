@@ -261,6 +261,21 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
                     backgroundColor: Colors.yellow[700],
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   ),
+                   child: Text(
+                    "Register as Worker", 
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    )
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
 
 
 
