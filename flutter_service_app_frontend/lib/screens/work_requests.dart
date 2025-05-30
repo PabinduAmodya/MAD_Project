@@ -182,6 +182,109 @@ class _WorkRequestsPageState extends State<WorkRequestsPage> {
     );
   }
 
+  
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("My Work Requests"),
+        backgroundColor: Colors.black,
+      ),
+      body: RefreshIndicator(
+        onRefresh: fetchWorkRequests,
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : errorMessage.isNotEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 70,
+                            color: Colors.red[300],
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            "Error",
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            errorMessage,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.red[700],
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.refresh),
+                            label: Text("Try Again"),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            ),
+                            onPressed: fetchWorkRequests,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : workRequests.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.assignment_outlined,
+                                size: 70,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                "No Work Requests Found",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "You don't have any work requests yet. Pull down to refresh or create a new request.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              ElevatedButton.icon(
+                                icon: Icon(Icons.add),
+                                label: Text("Create New Request"),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blue,
+                                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                ),
+                                onPressed: () {
+                                  // Navigate to create request page
+                                  // You'll need to implement this navigation
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
 
 
 
