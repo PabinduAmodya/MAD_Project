@@ -287,6 +287,22 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        validator: validator,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: Colors.yellow[700]),
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(color: Colors.red),
+          ),
+
 
 
 
