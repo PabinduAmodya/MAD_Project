@@ -275,6 +275,18 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
           ),
         ),
       ),
+      backgroundColor: Colors.black,
+    );
+  }
+
+  Widget buildValidatedTextField(
+    TextEditingController controller, 
+    String label, 
+    IconData icon, {
+    bool obscureText = false, 
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
 
 
 
