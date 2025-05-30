@@ -110,3 +110,25 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ error: 'Error logging in: ' + error.message });
   }
 };
+// Function to get all workers
+export const getAllWorkers = async (req, res) => {
+
+
+  
+  try {
+      const workersSnapshot = await db.collection('users').where('role', '==', 'worker').get();
+      
+      if (workersSnapshot.empty) {
+          return res.status(404).json({ message: 'No workers found!' });
+      }
+
+      const workers = workersSnapshot.docs.map(doc => ({
+          id: doc.id, 
+          ...doc.data()  // Spread operator to include all worker details
+      }));
+
+      res.status(200).json(workers);
+  } catch (error) {
+      res.status(500).json({ error: 'Error fetching workers: ' + error.message });
+  }
+};
