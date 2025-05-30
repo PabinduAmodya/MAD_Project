@@ -308,6 +308,9 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
              ),
            ),
          ),
+       );
+  }
+}
 
 
 
