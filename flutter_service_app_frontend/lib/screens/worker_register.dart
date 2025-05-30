@@ -254,6 +254,14 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
                     return null;
                   }
                 ),
+                 SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: registerWorker,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow[700],
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  ),
+
 
 
 
