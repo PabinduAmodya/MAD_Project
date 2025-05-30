@@ -380,4 +380,56 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 }  
+// Custom formatter for credit card number
+class _CardNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+    
+    String text = newValue.text.replaceAll(' ', '');
+    String newText = '';
+    
+    for (int i = 0; i < text.length; i++) {
+      if (i > 0 && i % 4 == 0) {
+        newText += ' ';
       }
+      newText += text[i];
+    }
+    
+    return TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
+// Custom formatter for expiry date
+class _ExpiryDateFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String text = newValue.text;
+    
+    if (text.isEmpty) {
+      return newValue;
+    }
+    
+    String newText = text;
+    if (text.length == 2 && oldValue.text.length == 1) {
+      newText = '$text/';
+    }
+    
+    // Add slash after month if user types more than 2 digits
+    if (text.length > 2 && !text.contains('/')) {
+      newText = '${text.substring(0, 2)}/${text.substring(2)}';
+    }
+    
+    return TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
