@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'payment.dart';
 
 class WorkRequestsPage extends StatefulWidget {
   final String userToken;
@@ -286,9 +287,98 @@ class _WorkRequestsPageState extends State<WorkRequestsPage> {
                         ),
                       )
 
+                    : ListView.builder(
+                        itemCount: workRequests.length,
+                        itemBuilder: (context, index) {
+                          var request = workRequests[index];
+                          bool isCompleted = request['status'] == 'completed';
+                          
+                          return Card(
+                            margin: EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  title: Text(request['title'] ?? 'No Title', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Description: ${request['description'] ?? 'No Description'}"),
+                                      Text("Location: ${request['location'] ?? 'No Location'}"),
+                                      Text(
+                                        "Status: ${request['status'] ?? 'Unknown'}", 
+                                        style: TextStyle(
+                                          color: isCompleted ? Colors.green : Colors.blue,
+                                          fontWeight: isCompleted ? FontWeight.bold : FontWeight.normal,
+                                        )
+                                      ),
+                                      if (request['deadline'] != null && request['deadline']['_seconds'] != null)
+                                        Text(
+                                          "Deadline: ${DateTime.fromMillisecondsSinceEpoch(request['deadline']['_seconds'] * 1000)}",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      if (request['workerName'] != null)
+                                        Text("Worker: ${request['workerName']}"),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    // Navigate to detailed request view if needed
+                                  },
+                                ),
+                                // Only show review and pay buttons if the request is completed and has a worker assigned
+                                if (isCompleted && request['workerId'] != null)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            icon: Icon(Icons.payments),
+                                            label: Text("Pay Now"),
+                                            style: ElevatedButton.styleFrom(
+                                              iconColor: const Color.fromARGB(255, 8, 8, 8),
+                                              foregroundColor: const Color.fromARGB(255, 6, 6, 6),
+                                              backgroundColor: Colors.yellow[700],
+                                            ),
+                                            onPressed: () {
+                                              navigateToPayment(request);
+                                            },
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            icon: Icon(Icons.rate_review),
+                                            label: Text("Review Worker"),
+                                            style: ElevatedButton.styleFrom(
+                                              iconColor: Colors.black,
+                                              foregroundColor: Colors.black,
+                                              backgroundColor: Colors.yellow[700],
+                                            ),
+                                            onPressed: () {
+                                              showReviewDialog(
+                                                request['workerId'],
+                                                request['workerName'] ?? 'Worker'
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+      ),
+    );
+  }
+}
 
 
-        }
+
+        
 
 
 
