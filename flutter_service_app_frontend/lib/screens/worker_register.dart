@@ -307,6 +307,8 @@ class _WorkerRegisterScreenState extends State<WorkerRegisterScreen> {
              borderSide: BorderSide(color: Colors.red, width: 2),
              ),
            ),
+         ),
+
 
 
             
